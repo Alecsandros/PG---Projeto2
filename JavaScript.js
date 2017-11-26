@@ -1,7 +1,14 @@
+var auxArray = [];
 var camera = [];
 var objeto = [];
 var iluminacao = [];
 var aux;
+var C; 
+var N; 
+var V;  
+var d;
+var hx;
+var hy;
 window.onload = function () {
 	var cfgSelected = document.getElementById('cfg');
 	var byuSelected = document.getElementById('byu');
@@ -14,15 +21,22 @@ window.onload = function () {
         var cfgReader = new FileReader();
         var byuReader = new FileReader();
         var txtReader = new FileReader();
-        
         cfgReader.onload = function (e) {
         	aux = "";
             camera = cfgReader.result.split('\n');
-            var cfgContents = document.getElementById('cfgcontents');  //Imprimir
-            for(var i = 0; i < camera.length; i++){   //imprimir
-            	aux = aux + camera[i]; 
-            } 
-            cfgContents.innerText = aux; //imprimir
+            for(var i = 0; i < camera.length-1; i++){
+                auxArray = camera[i].split(' ');
+                camera[i] = {a: auxArray[0], b: auxArray[1], c: auxArray[2]};
+            }
+            C = camera[0];
+            N = camera[1];
+            V = camera[2];
+            d = camera[3].a;
+            hx = camera[3].b;
+            hy = camera[3].c;
+            /*aux = d + ' ' + hx + ' ' + hy + ''; //imprimir
+            var content = document.getElementById('content');  //Imprimir
+            content.innerText = aux; //imprimir*/
         }
         cfgReader.readAsText(cfgTobeRead);
         byuReader.onload = function (e) {
