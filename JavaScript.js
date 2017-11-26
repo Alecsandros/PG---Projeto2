@@ -11,6 +11,9 @@ var d;
 var hx;
 var hy;
 
+var Pontos = [];
+var Triangulos = [];
+
 var Pl;
 var ka;
 var Ia;
@@ -38,26 +41,26 @@ window.onload = function () {
             C = setVetor(camera[0]);
             N = setVetor(camera[1]);
             V = setVetor(camera[2]);
-            var s = setVetor(camera[3]);
-            d = s.a;
-            hx = s.b;
-            hy = s.c;
-
-            aux = d + ' ' + hx + ' ' + hy + ''; //imprimir
-            var content = document.getElementById('content');  //Imprimir
-            content.innerText = aux; //imprimir*/
+            var vet = setVetor(camera[3]);
+            d = vet.a;
+            hx = vet.b;
+            hy = vet.c;
         }
         cfgReader.readAsText(cfgTobeRead);
-        byuReader.onload = function (e) {
-            objeto = byuReader.result.split('\n');
-            var byuContents = document.getElementById('byucontents');  //Imprimir
-            for(var i = 0; i < objeto.length; i++){   //imprimir
-            	aux = aux + objeto[i]; 
-            } 
-            byuContents.innerText = aux; //imprimir
-        }
 
+        byuReader.onload = function (e) {
+            objeto = byuReader.result.split('\n');  //de 1 a vet[0]-1
+            var vet = objeto[0].split(' ');
+            for(var i = 0; i < vet[0]; i ++){
+                Pontos[i] = setVetor(objeto[i+1]);
+            }
+            vet0 = parseInt(vet[0]) + 1;
+            for(var i = 0; i < vet[1]; i++){ // de vet[0] a vet[1]-1
+                Triangulos[i] = setVetor(objeto[i + vet0]);
+            }
+        }
         byuReader.readAsText(byuTobeRead);
+
         txtReader.onload = function (e) {
             iluminacao = txtReader.result.split('\n');
             Pl = setVetor(iluminacao[0]);
@@ -70,6 +73,7 @@ window.onload = function () {
             n = iluminacao[7];
         }
         txtReader.readAsText(txtTobeRead);
+
     }, false);
 }
 
@@ -78,3 +82,6 @@ function setVetor(vetor){
     return {a: auxArray[0], b: auxArray[1], c: auxArray[2]};
 }
 
+/*aux = d + ' ' + hx + ' ' + hy + ''; //imprimir
+var content = document.getElementById('content');  //Imprimir
+content.innerText = aux; //imprimir*/
