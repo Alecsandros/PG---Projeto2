@@ -47,6 +47,16 @@ window.onload = function () {
             d = vet.a;
             hx = vet.b;
             hy = vet.c;
+            
+            //Ortogonalizar o vetor V
+            var projecaoVN = projecao(V,N);
+            V = {a: V.a - projecaoVN.a, b: V.b - projecaoVN.b, c: V.c - projecaoVN.c};
+
+            //Produto vetorial para achar U
+            U = produtoVetorial(V,N);
+
+            var content = document.getElementById('content');  //Imprimir
+            content.innerText = U.a + ' ' + U.b + ' ' + U.c; //imprimir*/
         }
         cfgReader.readAsText(cfgTobeRead);
 
@@ -77,9 +87,7 @@ window.onload = function () {
         txtReader.readAsText(txtTobeRead);
 
     }, false);
-
-    V = V - projecao(V,N);
-    U = produtoVetorial(V,N);
+   
 }
 
 function setVetor(vetor){
@@ -90,33 +98,33 @@ function setVetor(vetor){
 /*aux = d + ' ' + hx + ' ' + hy + ''; //imprimir
 var content = document.getElementById('content');  //Imprimir
 content.innerText = aux; //imprimir*/
+
 function produtoInterno(vetor1,vetor2) {
     var total = 0;
-    total = (vetor1.a * vetor2.a) + (vetor1.b * vetor2.b) + (vetor1.c * vetor2.c);
-    return total;
+    result = (vetor1.a * vetor2.a) + (vetor1.b * vetor2.b) + (vetor1.c * vetor2.c);
+    return result;
 }
 
 function produtoVetorial(vetor1, vetor2) {
-    var resut = {a: 0, b: 0, c: 0};
-    result.a = (vetor1.b * vetor2.c) - (vetor2.b * vetor1.c);
-    result.b = -((vetor1.a * vetor2.c) - (vetor2.a * vetor1.c);
-    result.c = (vetor1.a * vetor2.b) - (vetor2.a * vetor1.b);
-    return result;
+    var aux1 = 0;
+    var aux2 = 0;
+    var aux3 = 0;
+    aux1 = (vetor1.b * vetor2.c) - (vetor2.b * vetor1.c);
+    aux2 = -1 * ((vetor1.a * vetor2.c) - (vetor2.a * vetor1.c));
+    aux3 = (vetor1.a * vetor2.b) - (vetor2.a * vetor1.b);
+    return {a: aux1, b: aux2, c: aux3};
 }
 
 function projecao(V,N) {
-    var result = 0;
-    resut = ((produtoInterno(V,N) * N) / (produtoInterno(N,N)));
-    return result;
+    var produtoVN = produtoInterno(V,N);
+    var produtoNN = produtoInterno(N,N);
+    var VNN = {a: N.a * produtoVN, b: N.b * produtoVN, c: N.c * produtoVN};
+    return {a: VNN.a / produtoNN, b: VNN.b / produtoNN, c: VNN.c / produtoNN};
 }
 
 function normalizacao(vetor) {
-    var resut = {a: 0, b: 0, c: 0};
     var aux = Math.sqrt(vetor.a*vetor.a + vetor.b*vetor.b + vetor.c*vetor.c);
-    result.a = vetor.a / aux;
-    result.b = vetor.b / aux;
-    result.c = vetor.c / aux;
-    return result;
+    return {a: vetor.a / aux, b: vetor.b / aux, c: vetor.c / aux};
 }
 
 /*Ortogonalizar V */
