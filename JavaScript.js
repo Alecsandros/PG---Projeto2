@@ -23,6 +23,8 @@ var ks;
 var Il;
 var n;
 
+var U;
+
 window.onload = function () {
 	var cfgSelected = document.getElementById('cfg');
 	var byuSelected = document.getElementById('byu');
@@ -75,6 +77,9 @@ window.onload = function () {
         txtReader.readAsText(txtTobeRead);
 
     }, false);
+
+    V = V - projecao(V,N);
+    U = produtoVetorial(V,N);
 }
 
 function setVetor(vetor){
@@ -85,3 +90,35 @@ function setVetor(vetor){
 /*aux = d + ' ' + hx + ' ' + hy + ''; //imprimir
 var content = document.getElementById('content');  //Imprimir
 content.innerText = aux; //imprimir*/
+function produtoInterno(vetor1,vetor2) {
+    var total = 0;
+    total = (vetor1.a * vetor2.a) + (vetor1.b * vetor2.b) + (vetor1.c * vetor2.c);
+    return total;
+}
+
+function produtoVetorial(vetor1, vetor2) {
+    var resut = {a: 0, b: 0, c: 0};
+    result.a = (vetor1.b * vetor2.c) - (vetor2.b * vetor1.c);
+    result.b = -((vetor1.a * vetor2.c) - (vetor2.a * vetor1.c);
+    result.c = (vetor1.a * vetor2.b) - (vetor2.a * vetor1.b);
+    return result;
+}
+
+function projecao(V,N) {
+    var result = 0;
+    resut = ((produtoInterno(V,N) * N) / (produtoInterno(N,N)));
+    return result;
+}
+
+function normalizacao(vetor) {
+    var resut = {a: 0, b: 0, c: 0};
+    var aux = Math.sqrt(vetor.a*vetor.a + vetor.b*vetor.b + vetor.c*vetor.c);
+    result.a = vetor.a / aux;
+    result.b = vetor.b / aux;
+    result.c = vetor.c / aux;
+    return result;
+}
+
+/*Ortogonalizar V */
+    
+
