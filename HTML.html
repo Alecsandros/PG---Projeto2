@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<script language="JavaScript" src="JavaScript.js"></script>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+
+    <title>FileAPI HTML5</title>
+    <style type="text/css">
+        #cfgcontents {
+            border: double;
+            overflow-y: scroll;
+            height: 100px;
+        }
+    </style>
+    <style type="text/css">
+        #byucontents {
+            border: double;
+            overflow-y: scroll;
+            height: 100px;
+        }
+    </style>
+    <style type="text/css">
+        #txtcontents {
+            border: double;
+            overflow-y: scroll;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <h1 align="center"> Corte 2D </h1>
+    <p><b>Selecione a câmera: </b></p>
+    <input type="file" id="cfg" /><br/>
+    <p><b> Selecione o objeto: </b></p>
+    <input type="file" id="byu" /><br/>
+    <p><b>Selecione a iluminação: </b></p>
+    <input type="file" id="txt" /><br/>
+    </br>
+    <input type = "button" id = "button" value = "carregar" />
+    </br>
+    <b>Conteúdo da câmera:</b>
+    <div id="cfgcontents"></div>
+    <b>Conteúdo do objeto:</b>
+    <div id="byucontents"></div>
+    <b>Conteúdo da iluminação:</b>
+    <div id="txtcontents"></div>
+</body>
+</html>
