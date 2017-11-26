@@ -3,12 +3,23 @@ var camera = [];
 var objeto = [];
 var iluminacao = [];
 var aux;
+
 var C; 
 var N; 
 var V;  
 var d;
 var hx;
 var hy;
+
+var Pl;
+var ka;
+var Ia;
+var kd;
+var Od;
+var ks;
+var Il;
+var n;
+
 window.onload = function () {
 	var cfgSelected = document.getElementById('cfg');
 	var byuSelected = document.getElementById('byu');
@@ -21,20 +32,18 @@ window.onload = function () {
         var cfgReader = new FileReader();
         var byuReader = new FileReader();
         var txtReader = new FileReader();
+
         cfgReader.onload = function (e) {
-        	aux = "";
             camera = cfgReader.result.split('\n');
-            for(var i = 0; i < camera.length-1; i++){
-                auxArray = camera[i].split(' ');
-                camera[i] = {a: auxArray[0], b: auxArray[1], c: auxArray[2]};
-            }
-            C = camera[0];
-            N = camera[1];
-            V = camera[2];
-            d = camera[3].a;
-            hx = camera[3].b;
-            hy = camera[3].c;
-            /*aux = d + ' ' + hx + ' ' + hy + ''; //imprimir
+            C = setVetor(camera[0]);
+            N = setVetor(camera[1]);
+            V = setVetor(camera[2]);
+            var s = setVetor(camera[3]);
+            d = s.a;
+            hx = s.b;
+            hy = s.c;
+
+            aux = d + ' ' + hx + ' ' + hy + ''; //imprimir
             var content = document.getElementById('content');  //Imprimir
             content.innerText = aux; //imprimir*/
         }
@@ -47,16 +56,25 @@ window.onload = function () {
             } 
             byuContents.innerText = aux; //imprimir
         }
+
         byuReader.readAsText(byuTobeRead);
         txtReader.onload = function (e) {
             iluminacao = txtReader.result.split('\n');
-            var txtContents = document.getElementById('txtcontents');  //Imprimir
-            for(var i = 0; i < iluminacao.length; i++){   //imprimir
-            	aux = aux + iluminacao[i]; 
-            } 
-            txtContents.innerText = aux; //imprimir
+            Pl = setVetor(iluminacao[0]);
+            ka = iluminacao[1];
+            Ia = setVetor(iluminacao[2]);
+            kd = iluminacao[3];
+            Od = setVetor(iluminacao[4]);
+            ks = iluminacao[5];
+            Il = setVetor(iluminacao[6]);
+            n = iluminacao[7];
         }
         txtReader.readAsText(txtTobeRead);
     }, false);
+}
+
+function setVetor(vetor){
+    auxArray = vetor.split(' ');
+    return {a: auxArray[0], b: auxArray[1], c: auxArray[2]};
 }
 
