@@ -24,6 +24,8 @@ var Il;
 var n;
 
 var U;
+var NormalTriangulo = [];
+var NormalVertice= [];
 
 window.onload = function () {
 	var cfgSelected = document.getElementById('cfg');
@@ -55,8 +57,6 @@ window.onload = function () {
             //Produto vetorial para achar U
             U = produtoVetorial(V,N);
 
-            var content = document.getElementById('content');  //Imprimir
-            content.innerText = U.a + ' ' + U.b + ' ' + U.c; //imprimir*/
         }
         cfgReader.readAsText(cfgTobeRead);
 
@@ -70,6 +70,16 @@ window.onload = function () {
             for(var i = 0; i < vet[1]; i++){ // de vet[0] a vet[1]-1
                 Triangulos[i] = setVetor(objeto[i + vet0]);
             }
+
+            // A normal do triangulo
+            for (var i = 0; i < Triangulos.length; i ++){
+                NormalTriangulo[i] = normalTriangulo(Triangulos[i]);
+            }
+
+            //A normal dos vertices
+            
+            var content = document.getElementById('content');  //Imprimir
+            content.innerText = NormalTriangulo[0].a + ' ' + NormalTriangulo[0].b + ' ' + NormalTriangulo[0].c; //imprimir*/
         }
         byuReader.readAsText(byuTobeRead);
 
@@ -123,10 +133,19 @@ function projecao(V,N) {
 }
 
 function normalizacao(vetor) {
-    var aux = Math.sqrt(vetor.a*vetor.a + vetor.b*vetor.b + vetor.c*vetor.c);
+    var aux = Math.sqrt( parseInt(vetor.a*vetor.a) + parseInt(vetor.b*vetor.b) + parseInt(vetor.c*vetor.c));
     return {a: vetor.a / aux, b: vetor.b / aux, c: vetor.c / aux};
 }
 
+function normalTriangulo(triangulo) {
+    var vertice1 = Pontos[triangulo.a - 1];
+    var vertice2 = Pontos[triangulo.b - 1];
+    var vertice3 = Pontos[triangulo.c - 1];
+    var P3P1 = {a: vertice3.a - vertice1.a, b: vertice3.b - vertice1.b, c: vertice3.c - vertice1.c };
+    var P2P1 = {a: vertice2.a - vertice1.a, b: vertice2.b - vertice1.b, c: vertice2.c - vertice1.c };
+    var vetorial = produtoVetorial(P3P1, P2P1);
+    return normalizacao(vetorial);
+}
 /*Ortogonalizar V */
     
 
