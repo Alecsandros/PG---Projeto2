@@ -50,9 +50,15 @@ window.onload = function () {
             hx = vet.b;
             hy = vet.c;
             
+            //Normalizar N
+            N = normalizacao(N);
+
             //Ortogonalizar o vetor V
             var projecaoVN = projecao(V,N);
             V = {a: V.a - projecaoVN.a, b: V.b - projecaoVN.b, c: V.c - projecaoVN.c};
+
+            //Normaizar V
+            V = normalizacao(V);
 
             //Produto vetorial para achar U
             U = produtoVetorial(V,N);
@@ -71,15 +77,18 @@ window.onload = function () {
                 Triangulos[i] = setVetor(objeto[i + vet0]);
             }
 
-            // A normal do triangulo
-            for (var i = 0; i < Triangulos.length; i ++){
-                NormalTriangulo[i] = normalTriangulo(Triangulos[i]);
+            //A normal dos vertices inicializada com 0
+            for(var i = 0; i < Pontos.length; i++){
+                NormalVertice[i] = {a: 0, b:0, c:0};
             }
 
-            //A normal dos vertices
+
+            // A normal do triangulo
+            for (var i = 0; i < Triangulos.length; i++){
+                NormalTriangulo[i] = normalTriangulo(Triangulos[i]);
+                normalVertice(i);
+            }
             
-            var content = document.getElementById('content');  //Imprimir
-            content.innerText = NormalTriangulo[0].a + ' ' + NormalTriangulo[0].b + ' ' + NormalTriangulo[0].c; //imprimir*/
         }
         byuReader.readAsText(byuTobeRead);
 
@@ -146,6 +155,17 @@ function normalTriangulo(triangulo) {
     var vetorial = produtoVetorial(P3P1, P2P1);
     return normalizacao(vetorial);
 }
-/*Ortogonalizar V */
+
+function normalVertice(i){
+    var p1 = Triangulos[i].a - 1;
+    var p2 = Triangulos[i].b - 1;
+    var p3 = Triangulos[i].c - 1;
+    var Ta = NormalTriangulo[i].a;
+    var Tb = NormalTriangulo[i].b;
+    var Tc = NormalTriangulo[i].c;
+    NormalVertice[p1] = {a: NormalVertice[p1].a + Ta, b: NormalVertice[p1].b + Tb,c: NormalVertice[p1].c + Tc};
+    NormalVertice[p2] = {a: NormalVertice[p2].a + Ta, b: NormalVertice[p2].b + Tb,c: NormalVertice[p2].c + Tc};
+    NormalVertice[p3] = {a: NormalVertice[p3].a + Ta, b: NormalVertice[p3].b + Tb,c: NormalVertice[p3].c + Tc};
+}
     
 
