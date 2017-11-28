@@ -2,7 +2,14 @@ var auxArray = [];
 var camera = [];
 var objeto = [];
 var iluminacao = [];
-var aux;
+
+//impressão
+var aux1 = '';
+var aux2 = '';
+var aux3 = '';
+var aux4 = '';
+var aux5 = '';
+//impressão
 
 var C; 
 var N; 
@@ -27,6 +34,11 @@ var U;
 var NormalTriangulo = [];
 var NormalVertice= [];
 
+var I;
+var PontosVista = [];
+var PlVista;
+
+
 window.onload = function () {
 	var cfgSelected = document.getElementById('cfg');
 	var byuSelected = document.getElementById('byu');
@@ -49,6 +61,14 @@ window.onload = function () {
             d = vet.a;
             hx = vet.b;
             hy = vet.c;
+
+            //imprimir
+            aux = '1º Carregar arquivos (objeto(s), iluminação e câmera): \n Camera: \n';
+            aux += 'C: ' + C.a + ' ' + C.b + ' ' + C.c + '\n';
+            aux += 'Vetor N: ' + N.a + ' ' + N.b + ' ' + N.c + '\n';
+            aux += 'Vetor V: ' + V.a + ' ' + V.b + ' ' + V.c + '\n';
+            aux += 'd: ' + d + ' hx: ' + hx + ' hy: ' + hy + '\n';
+            //imrpimir
             
             //Normalizar N
             N = normalizacao(N);
@@ -63,6 +83,10 @@ window.onload = function () {
             //Produto vetorial para achar U
             U = produtoVetorial(V,N);
 
+            //Monta a matriz de mudança de base com U, V e N
+            MontarMatriz();
+
+            imprimir();
         }
         cfgReader.readAsText(cfgTobeRead);
 
@@ -88,6 +112,11 @@ window.onload = function () {
                 NormalTriangulo[i] = normalTriangulo(Triangulos[i]);
                 normalVertice(i);
             }
+
+            //Cada ponto para coordenada de vista 
+            CoodenadasVistaPontos();
+
+            imprimir();
             
         }
         byuReader.readAsText(byuTobeRead);
@@ -102,10 +131,16 @@ window.onload = function () {
             ks = iluminacao[5];
             Il = setVetor(iluminacao[6]);
             n = iluminacao[7];
+
+            //Posicao da fonte de luz de coordenadas de mundo para coordenadas de vista
+            CoodenadaVistaPl();
+
+            imprimir();
         }
         txtReader.readAsText(txtTobeRead);
 
     }, false);
+    
    
 }
 
@@ -113,10 +148,6 @@ function setVetor(vetor){
     auxArray = vetor.split(' ');
     return {a: auxArray[0], b: auxArray[1], c: auxArray[2]};
 }
-
-/*aux = d + ' ' + hx + ' ' + hy + ''; //imprimir
-var content = document.getElementById('content');  //Imprimir
-content.innerText = aux; //imprimir*/
 
 function produtoInterno(vetor1,vetor2) {
     var total = 0;
@@ -167,5 +198,81 @@ function normalVertice(i){
     NormalVertice[p2] = {a: NormalVertice[p2].a + Ta, b: NormalVertice[p2].b + Tb,c: NormalVertice[p2].c + Tc};
     NormalVertice[p3] = {a: NormalVertice[p3].a + Ta, b: NormalVertice[p3].b + Tb,c: NormalVertice[p3].c + Tc};
 }
+
+// Não conseguimos usar 11 para representar Linha 1, coluna 1, então as colunas serão representadas de "aa" a "cc"
+// [ aa ab ac ]
+// [ ba bb bc ]
+// [ ca cb cc ]
+
+function MontarMatriz(){
+    I = {aa: U.a, ab: U.b, ac: U.c, ba: V.a, bb: V.b, bc: V.c, ca: N.a, cb: N.b, cc: N.c};
+}
+
+function CoodenadasVistaPontos(){
+    for(var i = 0; i < Pontos.length; i++){
+        var matriz = {aa: Pontos[i].a - C.a, ba: Pontos[i].b - C.b, ca: Pontos[i].c - C.c};
+        PontosVista[i] = multmatrizes(matriz);;
+    }
+}
+
+function CoodenadaVistaPl(){
+    var matriz = {aa: Pl.a - C.a , ba: Pl.b - C.b, ca: Pl.c - C.c};
+    PlVista = multmatrizes(matriz);
+}
+
+function multmatrizes(matriz){
+    var x = (I.aa * matriz.aa) + (I.ab * matriz.ba) + (I.a3 * matriz.ca);
+    var y = (I.ba * matriz.aa) + (I.bb * matriz.ba) + (I.bc * matriz.ca);
+    var z = (I.ca * matriz.aa) + (I.cb * matriz.ba) + (I.cc * matriz.ca);
+    return {a: x, b: y, c: z};
+}
+
+//A parte de impressão será removida do projeto final, serve apenas para facilitar nossa vida e a vida dos monitores na correção
+
+function imprimir (){
+    var auxT;
+    aux += 'Objeto: \n';
+    for(var i = 0; i < Pontos.length; i ++){
+        aux += 'Ponto ' + (i+1) + ': ' + Pontos[i].a + '  ' + Pontos[i].b + '  ' + Pontos[i].c + '\n';
+    }
+    for(var i = 0; i < Triangulos.length; i++){
+        aux += 'Triangulo ' + (i+1) + ': ' + Triangulos[i].a + '  ' + Triangulos[i].b + '  ' + Triangulos[i].c + '\n';
+    }
+    aux += 'Iluminacao: \n';
+    aux += 'Pl: ' + Pl.a + ' ' + Pl.b + ' ' + Pl.c + '\n';
+    aux += 'ka: ' + ka + '\n';
+    aux += 'Ia: ' + Ia.a + ' ' + Ia.b + ' ' + Ia.c + '\n';
+    aux += 'kd: ' + kd + '\n';
+    aux += 'Od: ' + Od.a + ' ' + Od.b + ' ' + Od.c + '\n';
+    aux += 'ks: ' + ks + '\n';
+    aux += 'Il: ' + Il.a + ' ' + Il.b + ' ' + Il.c + '\n';
+    aux += 'n: ' + n + '\n';
+    auxT = aux ;
+
     
+    aux3 = 'Vetor N(normalizado): ' + N.a + '  ' + N.b + '  ' + N.c + '\n';
+    aux3 += 'Vetor V(ortogonalizado + normalizado): ' + V.a + '  ' + V.b + '  ' + V.c + '\n';
+    aux3 += 'Vetor U: ' + U.a + '  ' + U.b + '  ' + U.c + '\n';
+    auxT += '\n\n 3º Preparar a câmera:\n' + aux3;
+
+
+    for (var i = 0; i < Triangulos.length; i++){
+        aux4 += 'NormalTriangulo ' + (i+1) + ': ' + NormalTriangulo[i].a + '  ' + NormalTriangulo[i].b + '  ' + NormalTriangulo[i].c + '\n';
+    }
+    for(var i = 0; i < Pontos.length; i++){
+        aux4 += 'NormalVertice ' + (i+1) + ': ' + NormalVertice[i].a + '  ' + NormalVertice[i].b + '  ' + NormalVertice[i].c + '\n';
+    }
+    auxT += '\n\n 4º Calcular a normal do triângulo e dos vérties: \n ' + aux4; 
+
+    aux5 += 'Cordenada de vista Pl: ' + PlVista.a + '  ' + PlVista.b + '  ' + PlVista.c + '\n';
+
+    for(var i = 0; i < Pontos.length; i++){
+        aux5 += 'PontosVista ' + (i+1) + ': ' + PontosVista[i].a + '  ' + PontosVista[i].b + '  ' + PontosVista[i].c + '\n';
+    }
+    auxT += '\n\n 5º Fazer a mudança de coordenadas de mundo para coordenadas de vista: \n ' + aux5; 
+
+    var content = document.getElementById('content'); 
+    content.innerText = auxT; 
+
+}
 
