@@ -86,6 +86,8 @@ window.onload = function () {
             //Monta a matriz de mudança de base com U, V e N
             MontarMatriz();
 
+            imprimir();
+
         }
         cfgReader.readAsText(cfgTobeRead);
 
@@ -115,6 +117,7 @@ window.onload = function () {
             //Cada ponto para coordenada de vista 
             CoodenadasVistaPontos();
 
+            imprimir();
             
         }
         byuReader.readAsText(byuTobeRead);
@@ -172,7 +175,7 @@ function projecao(V,N) {
 }
 
 function normalizacao(vetor) {
-    var aux = Math.sqrt( parseInt(vetor.a*vetor.a) + parseInt(vetor.b*vetor.b) + parseInt(vetor.c*vetor.c));
+    var aux = Math.sqrt( parseFloat(vetor.a*vetor.a) + parseFloat(vetor.b*vetor.b) + parseFloat(vetor.c*vetor.c));
     return {a: vetor.a / aux, b: vetor.b / aux, c: vetor.c / aux};
 }
 
