@@ -63,11 +63,11 @@ window.onload = function () {
             hy = vet.c;
 
             //imprimir
-            aux = '1º Carregar arquivos (objeto(s), iluminação e câmera): \n Camera: \n';
-            aux += 'C: ' + C.a + ' ' + C.b + ' ' + C.c + '\n';
-            aux += 'Vetor N: ' + N.a + ' ' + N.b + ' ' + N.c + '\n';
-            aux += 'Vetor V: ' + V.a + ' ' + V.b + ' ' + V.c + '\n';
-            aux += 'd: ' + d + ' hx: ' + hx + ' hy: ' + hy + '\n';
+            aux2 = '1º Carregar arquivos (objeto(s), iluminação e câmera): \n Camera: \n';
+            aux2 += 'C: ' + C.a + ' ' + C.b + ' ' + C.c + '\n';
+            aux2 += 'Vetor N: ' + N.a + ' ' + N.b + ' ' + N.c + '\n';
+            aux2 += 'Vetor V: ' + V.a + ' ' + V.b + ' ' + V.c + '\n';
+            aux2 += 'd: ' + d + ' hx: ' + hx + ' hy: ' + hy + '\n';
             //imrpimir
             
             //Normalizar N
@@ -233,7 +233,8 @@ function multmatrizes(matriz){
 
 function imprimir (){
     var auxT;
-    aux += 'Objeto: \n';
+    auxT = aux2;
+    aux = 'Objeto: \n';
     for(var i = 0; i < Pontos.length; i ++){
         aux += 'Ponto ' + (i+1) + ': ' + Pontos[i].a + '  ' + Pontos[i].b + '  ' + Pontos[i].c + '\n';
     }
@@ -249,7 +250,7 @@ function imprimir (){
     aux += 'ks: ' + ks + '\n';
     aux += 'Il: ' + Il.a + ' ' + Il.b + ' ' + Il.c + '\n';
     aux += 'n: ' + n + '\n';
-    auxT = aux ;
+    auxT += aux ;
 
     
     aux3 = 'Vetor N(normalizado): ' + N.a + '  ' + N.b + '  ' + N.c + '\n';
