@@ -86,7 +86,6 @@ window.onload = function () {
             //Monta a matriz de mudança de base com U, V e N
             MontarMatriz();
 
-            imprimir();
         }
         cfgReader.readAsText(cfgTobeRead);
 
@@ -116,7 +115,6 @@ window.onload = function () {
             //Cada ponto para coordenada de vista 
             CoodenadasVistaPontos();
 
-            imprimir();
             
         }
         byuReader.readAsText(byuTobeRead);
@@ -136,6 +134,7 @@ window.onload = function () {
             CoodenadaVistaPl();
 
             imprimir();
+
         }
         txtReader.readAsText(txtTobeRead);
 
