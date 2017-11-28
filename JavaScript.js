@@ -216,12 +216,12 @@ function CoodenadasVistaPontos(){
 }
 
 function CoodenadaVistaPl(){
-    var matriz = {aa: Pl.a - C.a , ba: Pl.b - C.b, ca: Pl.c - C.c};
+    var matriz = {aa: Pl.a - C.a, ba: Pl.b - C.b, ca: Pl.c - C.c};
     PlVista = multmatrizes(matriz);
 }
 
 function multmatrizes(matriz){
-    var x = (I.aa * matriz.aa) + (I.ab * matriz.ba) + (I.a3 * matriz.ca);
+    var x = (I.aa * matriz.aa) + (I.ab * matriz.ba) + (I.ac * matriz.ca);
     var y = (I.ba * matriz.aa) + (I.bb * matriz.ba) + (I.bc * matriz.ca);
     var z = (I.ca * matriz.aa) + (I.cb * matriz.ba) + (I.cc * matriz.ca);
     return {a: x, b: y, c: z};
@@ -264,7 +264,7 @@ function imprimir (){
     }
     auxT += '\n\n 4º Calcular a normal do triângulo e dos vérties: \n ' + aux4; 
 
-    aux5 += 'Cordenada de vista Pl: ' + PlVista.a + '  ' + PlVista.b + '  ' + PlVista.c + '\n';
+    aux5 = 'Cordenada de vista Pl: ' + PlVista.a + '  ' + PlVista.b + '  ' + PlVista.c + '\n';
 
     for(var i = 0; i < Pontos.length; i++){
         aux5 += 'PontosVista ' + (i+1) + ': ' + PontosVista[i].a + '  ' + PontosVista[i].b + '  ' + PontosVista[i].c + '\n';
