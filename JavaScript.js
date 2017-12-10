@@ -1,3 +1,7 @@
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
+var DesenharPontos = [];
+
 var auxArray = [];
 var camera = [];
 var objeto = [];
@@ -37,6 +41,20 @@ var NormalVertice= [];
 var I;
 var PontosVista = [];
 var PlVista;
+
+var PontosTela = [];
+var largurajanela = window.innerWidth;  */ innerWidth retorna largura da janela mas n sei como ficaria isso no html/*
+var alturajanela = window.innerHeight; */innerHeight retorna altura da janela mas n sei como ficaria isso no html/*
+
+function resizeCanvas() {
+  canvas.width = parseFloat((window.getComputedStyle(canvas).width));
+  canvas.height = parseFloat((window.getComputedStyle(canvas).height));
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+}
 
 
 window.onload = function () {
@@ -86,7 +104,7 @@ window.onload = function () {
             //Monta a matriz de mudança de base com U, V e N
             MontarMatriz();
 
-            imprimir();
+            //imprimir();
         }
         cfgReader.readAsText(cfgTobeRead);
 
@@ -116,7 +134,7 @@ window.onload = function () {
             //Cada ponto para coordenada de vista 
             CoodenadasVistaPontos();
 
-            imprimir();
+            //imprimir();
             
         }
         byuReader.readAsText(byuTobeRead);
@@ -135,7 +153,7 @@ window.onload = function () {
             //Posicao da fonte de luz de coordenadas de mundo para coordenadas de vista
             CoodenadaVistaPl();
 
-            imprimir();
+            //imprimir();
         }
         txtReader.readAsText(txtTobeRead);
 
@@ -226,6 +244,83 @@ function multmatrizes(matriz){
     var z = (I.ca * matriz.aa) + (I.cb * matriz.ba) + (I.cc * matriz.ca);
     return {a: x, b: y, c: z};
 }
+
+function coordenadasTela(){
+    for(var i = 0; i < PontosVista.length; i++){
+        PontosTela = {x: (d/hx) * (PontosVista[i].x / PontosVista[i].z), y: (d/hy) * (PontosVista[i].y / PontosVista[i].z)};
+        PontosTela.x = (int) ((PontosTela.x + 1) *  largurajanela / 2);
+        PontosTela.y = (int) ((1 - PontosTela.y) * alturajanela / 2); 
+    }
+}
+
+function scanline(){
+    for(var i = 0; i < Triangulos; i++){
+        var p1 = PontosTela[Triangulos[i].x];
+        var p2 = PontosTela[Triangulos[i].y];
+        var p3 = PontosTela[Triangulos[i].z];
+        var v1, v2, v3, v4;
+        var ord = ordem(p1, p2, p3);
+        v1 = ordem[0];
+        v2 = ordem[1];
+        v3 = ordem[0];
+        Bottom(v1, v2, v3);
+        Top(v1, v2, v3);
+    }
+}
+
+function ordem(p1, p2, p3){
+    var ordem = [];
+    var aux;
+    ordem[0] = p1;
+    ordem[1] = p2;
+    ordem[2] = p3;
+    if(p1.y >= p2.y && p1.y >= p3.y){
+       if(p2.y < p3.y){
+            ordem[1] = p3;
+            ordem[2] = p2;
+       }
+    } else if (p2.y >= p1.y && p2.y >= p3.y){
+        ordem[0] = p2;
+        ordem[1] = p1;
+        if(p1.y < p3.y){
+            ordem[1] = p3;
+            ordem[2] = p1;
+        }
+    } else if(p3.y >= p1.y && p3.y >= p2.y){
+        ordem [0] = p3;
+        ordem[2] = p1;
+        if(p2.y < p1.y){
+            ordem[1] = p1;
+            ordem[2] = p2;
+        }
+    }
+    reuturn ordem;
+}
+
+function Top(v1, v2, v3){
+    var invislope1 = (v3.x - v1.x) / (v3.y - v1.y);
+    var invislope2 = (v3.x - v2.x) / (v3.y - v2.y);
+    var curx1 = v3.x;
+    var curx2 = v3.x; 
+    for(int scanlineY = v3.y; scanlineY > v1.y; scanlineY--){
+        dwarLine((int)curx1, scanlineY, (int)curx2, scanlineY);
+        curx1 -= invislope1;
+        curx2 -= invislope2;
+    }
+}
+
+function Bottom(v1, v2, v3){
+    var invislope1 = (v2.x - v1.x) / (v2.y - v1.y);
+    var invislope2 = (v3.x - v1.x) / (v3.y - v1.y);
+    var curx1 = v1.x;
+    var curx2 = v1.x; 
+    for(int scanlineY = v1.y; scanlineY <= v2.y; scanlineY++){
+        dwarLine((int)curx1, scanlineY, (int)curx2, scanlineY);
+        curx1 += invislope1;
+        curx2 += invislope2;
+    }
+}
+
 
 //A parte de impressão será removida do projeto final, serve apenas para facilitar nossa vida e a vida dos monitores na correção
 
