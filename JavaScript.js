@@ -81,11 +81,11 @@ window.onload = function () {
             hy = vet.c;
 
             //imprimir
-            aux = '1º Carregar arquivos (objeto(s), iluminação e câmera): \n Camera: \n';
-            aux += 'C: ' + C.a + ' ' + C.b + ' ' + C.c + '\n';
-            aux += 'Vetor N: ' + N.a + ' ' + N.b + ' ' + N.c + '\n';
-            aux += 'Vetor V: ' + V.a + ' ' + V.b + ' ' + V.c + '\n';
-            aux += 'd: ' + d + ' hx: ' + hx + ' hy: ' + hy + '\n';
+            aux2 = '1º Carregar arquivos (objeto(s), iluminação e câmera): \n Camera: \n';
+            aux2 += 'C: ' + C.a + ' ' + C.b + ' ' + C.c + '\n';
+            aux2 += 'Vetor N: ' + N.a + ' ' + N.b + ' ' + N.c + '\n';
+            aux2 += 'Vetor V: ' + V.a + ' ' + V.b + ' ' + V.c + '\n';
+            aux2 += 'd: ' + d + ' hx: ' + hx + ' hy: ' + hy + '\n';
             //imrpimir
             
             //Normalizar N
@@ -104,7 +104,12 @@ window.onload = function () {
             //Monta a matriz de mudança de base com U, V e N
             MontarMatriz();
 
+<<<<<<< HEAD
             //imprimir();
+=======
+            imprimir();
+
+>>>>>>> 64d511914f0f873452c725534303ba9446775bc8
         }
         cfgReader.readAsText(cfgTobeRead);
 
@@ -153,7 +158,12 @@ window.onload = function () {
             //Posicao da fonte de luz de coordenadas de mundo para coordenadas de vista
             CoodenadaVistaPl();
 
+<<<<<<< HEAD
             //imprimir();
+=======
+            imprimir();
+
+>>>>>>> 64d511914f0f873452c725534303ba9446775bc8
         }
         txtReader.readAsText(txtTobeRead);
 
@@ -191,7 +201,7 @@ function projecao(V,N) {
 }
 
 function normalizacao(vetor) {
-    var aux = Math.sqrt( parseInt(vetor.a*vetor.a) + parseInt(vetor.b*vetor.b) + parseInt(vetor.c*vetor.c));
+    var aux = Math.sqrt( parseFloat(vetor.a*vetor.a) + parseFloat(vetor.b*vetor.b) + parseFloat(vetor.c*vetor.c));
     return {a: vetor.a / aux, b: vetor.b / aux, c: vetor.c / aux};
 }
 
@@ -326,7 +336,8 @@ function Bottom(v1, v2, v3){
 
 function imprimir (){
     var auxT;
-    aux += 'Objeto: \n';
+    auxT = aux2;
+    aux = 'Objeto: \n';
     for(var i = 0; i < Pontos.length; i ++){
         aux += 'Ponto ' + (i+1) + ': ' + Pontos[i].a + '  ' + Pontos[i].b + '  ' + Pontos[i].c + '\n';
     }
@@ -342,7 +353,7 @@ function imprimir (){
     aux += 'ks: ' + ks + '\n';
     aux += 'Il: ' + Il.a + ' ' + Il.b + ' ' + Il.c + '\n';
     aux += 'n: ' + n + '\n';
-    auxT = aux ;
+    auxT += aux ;
 
     
     aux3 = 'Vetor N(normalizado): ' + N.a + '  ' + N.b + '  ' + N.c + '\n';
