@@ -1,3 +1,7 @@
+var canvas = document.getElementById('canvas');
+//var ctx = canvas.getContext('2d');
+var DesenharPontos = [];
+
 var auxArray = [];
 var camera = [];
 var objeto = [];
@@ -9,6 +13,7 @@ var aux2 = '';
 var aux3 = '';
 var aux4 = '';
 var aux5 = '';
+var aux7 = '';
 //impressão
 
 var C; 
@@ -37,6 +42,19 @@ var NormalVertice= [];
 var I;
 var PontosVista = [];
 var PlVista;
+
+var PontosTela = [];
+var larguraJanela = 1; //MUDAR N ESQUECER
+var alturaJanela = 1; //MUDAR N ESQUECER
+
+function resizeCanvas() {
+  canvas.width = parseFloat((window.getComputedStyle(canvas).width));
+  canvas.height = parseFloat((window.getComputedStyle(canvas).height));
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
 
 
 window.onload = function () {
@@ -86,7 +104,7 @@ window.onload = function () {
             //Monta a matriz de mudança de base com U, V e N
             MontarMatriz();
 
-            imprimir();
+            /*imprimir();*/
 
         }
         cfgReader.readAsText(cfgTobeRead);
@@ -117,7 +135,13 @@ window.onload = function () {
             //Cada ponto para coordenada de vista 
             CoodenadasVistaPontos();
 
-            imprimir();
+            //Cada ponto para coordenada de tela
+            CoordenadasTela()
+
+            //Chamando o scanline para imprimir os pontos dos triangulos na tela
+            Scanline();
+
+            /*imprimir();*/
             
         }
         byuReader.readAsText(byuTobeRead);
@@ -136,7 +160,8 @@ window.onload = function () {
             //Posicao da fonte de luz de coordenadas de mundo para coordenadas de vista
             CoodenadaVistaPl();
 
-            imprimir();
+
+            /*imprimir();*/
 
         }
         txtReader.readAsText(txtTobeRead);
@@ -229,6 +254,101 @@ function multmatrizes(matriz){
     return {a: x, b: y, c: z};
 }
 
+function CoordenadasTela(){
+    for(var i = 0; i < PontosVista.length; i++){
+        var a = (d/hx) * PontosVista[i].a;
+        var b = (d/hy) * PontosVista[i].b;
+        a = a / PontosVista[i].c;
+        b = b / PontosVista[i].c;
+        a = (a + 1) * larguraJanela / 2;
+        b = (1 - b) * alturaJanela / 2;
+        PontosTela[i] = {x: a, y: b};
+    }
+}
+
+function Scanline(){
+    
+    for(var i = 0; i < Triangulos.length; i++){
+        var p1 = PontosTela[parseInt(Triangulos[i].a)];
+        var p2 = PontosTela[parseInt(Triangulos[i].b)];
+        var p3 = PontosTela[parseInt(Triangulos[i].c)];
+        var v1, v2, v3, v4;
+        var ord = ordem(p1, p2, p3);
+        v1 = ord[2];
+        v2 = ord[1];
+        v3 = ord[0];
+        //NÃO ESQUECER DE MUDAR PARA PARSEINTTTTTT
+        v4 = {x: parseFloat(v1.x + (parseFloat(v2.y - v1.y) / parseFloat(v3.y - v1.y)) * (v3.x - v1.x)), y: v2.y};
+        Bottom(v1, v2, v4);
+        Top(v2, v4, v3);
+    }
+}
+
+function ordem(p1, p2, p3){
+    var ordem = [];
+    var aux;
+    ordem[0] = p1;
+    ordem[1] = p2;
+    ordem[2] = p3;
+    if(p1.y >= p2.y && p1.y >= p3.y){
+       if(p3.y >= p2.y){
+            ordem[1] = {x: p3.x, y: p3.y};
+            ordem[2] = {x: p2.x, y: p3.y};
+       }
+    } else if (p2.y >= p1.y && p2.y >= p3.y){
+        ordem[0] = p2;
+        ordem[1] = p1;
+        if(p1.y < p3.y){
+            ordem[1] = p3;
+            ordem[2] = p1;
+        }
+    } else if(p3.y >= p1.y && p3.y >= p2.y){
+        ordem [0] = p3;
+        ordem[2] = p1;
+        if(p2.y < p1.y){
+            ordem[1] = p1;
+            ordem[2] = p2;
+        }
+    }
+    return ordem;
+}
+
+function Top(v1, v2, v3){
+    var invislope1 = (v3.x - v1.x) / (v3.y - v1.y);
+    var invislope2 = (v3.x - v2.x) / (v3.y - v2.y);
+    var curx1 = v3.x;
+    var curx2 = v3.x; 
+    for(var scanlineY = v3.y; scanlineY > v1.y; scanlineY--){
+        desenharPontos(curx1, scanlineY, curx2);
+        curx1 -= invislope1;
+        curx2 -= invislope2;
+    }
+}
+function Bottom(v1, v2, v3){
+    var invislope1 = (v2.x - v1.x) / (v2.y - v1.y);
+    var invislope2 = (v3.x - v1.x) / (v3.y - v1.y);
+    var curx1 = v1.x;
+    var curx2 = v1.x; 
+    var aaa = v1.y + ' ' + v2.y + ' ';
+    for(var scanlineY = v1.y; scanlineY <= v2.y; scanlineY++){
+        /*desenharPontos(curx1, scanlineY, curx2);
+        curx1 += invislope1;
+        curx2 += invislope2;*/
+        aaa += scanlineY + '\n';
+    }
+    var content = document.getElementById('content'); 
+    content.innerText = aaa;
+}
+
+var arraydedesenhar;
+function desenharPontos(curx1, b, curx2){
+    for(var a = curx1; a <= curx2; a++){
+        var ponto = {x: a,y: b};
+        arraydedesenhar.push(ponto);
+        //draw();
+    }
+}
+
 //A parte de impressão será removida do projeto final, serve apenas para facilitar nossa vida e a vida dos monitores na correção
 
 function imprimir (){
@@ -274,8 +394,14 @@ function imprimir (){
     }
     auxT += '\n\n 5º Fazer a mudança de coordenadas de mundo para coordenadas de vista: \n ' + aux5; 
 
+    var aux6 = '2º ENTREGA \n' + PontosTela.length;
+    for (var i  = 0; i < PontosTela.length; i++){
+        aux6 += 'PontosTela ' + (i+1) + ': ' + PontosTela[i].x + ' ' + PontosTela[i].y + '\n'; 
+    }
+
+    auxT += aux6;
+    auxT += aux7;
     var content = document.getElementById('content'); 
     content.innerText = auxT; 
-
 }
 
