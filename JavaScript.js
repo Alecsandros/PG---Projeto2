@@ -104,13 +104,8 @@ window.onload = function () {
             //Monta a matriz de mudança de base com U, V e N
             MontarMatriz();
 
-<<<<<<< HEAD
             //imprimir();
-=======
-            imprimir();
 
->>>>>>> 64d511914f0f873452c725534303ba9446775bc8
-        }
         cfgReader.readAsText(cfgTobeRead);
 
         byuReader.onload = function (e) {
@@ -157,18 +152,11 @@ window.onload = function () {
 
             //Posicao da fonte de luz de coordenadas de mundo para coordenadas de vista
             CoodenadaVistaPl();
-
-<<<<<<< HEAD
             //imprimir();
-=======
-            imprimir();
-
->>>>>>> 64d511914f0f873452c725534303ba9446775bc8
         }
         txtReader.readAsText(txtTobeRead);
 
-    }, false);
-    
+    }, false); 
    
 }
 
@@ -273,6 +261,7 @@ function scanline(){
         v1 = ordem[0];
         v2 = ordem[1];
         v3 = ordem[0];
+        v4 = (int) {x: (v1.x + ((float)(v2.y - v1.y) /(float)(v3.y - v1.y)) * (v3.x - v1.x)), y: v2.y};
         Bottom(v1, v2, v3);
         Top(v1, v2, v3);
     }
