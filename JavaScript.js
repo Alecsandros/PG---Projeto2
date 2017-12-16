@@ -14,6 +14,7 @@ var aux3 = '';
 var aux4 = '';
 var aux5 = '';
 var aux7 = '';
+var t = '';
 //impressão
 
 var C; 
@@ -44,10 +45,10 @@ var PontosVista = [];
 var PlVista;
 
 var PontosTela = [];
-var larguraJanela = 1; //MUDAR N ESQUECER
-var alturaJanela = 1; //MUDAR N ESQUECER
+var larguraJanela = 1000; //MUDAR N ESQUECER
+var alturaJanela = 1000; //MUDAR N ESQUECER
 
-var PontosDesenhar;
+var PontosDesenhar = [];
 
 function resizeCanvas() {
   canvas.width = parseFloat((window.getComputedStyle(canvas).width));
@@ -143,7 +144,7 @@ window.onload = function () {
             //Chamando o scanline para imprimir os pontos dos triangulos na tela
             Scanline();
 
-            /*imprimir();*/
+           /* imprimir();*/
             
         }
         byuReader.readAsText(byuTobeRead);
@@ -175,7 +176,7 @@ window.onload = function () {
 
 function setVetor(vetor){
     var auxArray = vetor.split(' ');
-    return {a: auxArray[0], b: auxArray[1], c: auxArray[2]};
+    return {a: parseFloat(auxArray[0]), b: parseFloat(auxArray[1]), c: parseFloat(auxArray[2])};
 }
 
 function produtoInterno(vetor1,vetor2) {
@@ -260,23 +261,22 @@ function CoordenadasTela(){
         b = b / PontosVista[i].c;
         a = (a + 1) * larguraJanela / 2;
         b = (1 - b) * alturaJanela / 2;
-        PontosTela[i] = {x: a, y: b};
+        PontosTela[i] = {x: parseInt(a), y: parseInt(b)};
     }
 }
 
 function Scanline(){
-    
     for(var i = 0; i < Triangulos.length; i++){
-        var p1 = PontosTela[parseInt(Triangulos[i].a)];
-        var p2 = PontosTela[parseInt(Triangulos[i].b)];
-        var p3 = PontosTela[parseInt(Triangulos[i].c)];
+    	var p1 = PontosTela[parseInt(Triangulos[i].a) -1];
+        var p2 = PontosTela[parseInt(Triangulos[i].b) -1];
+        var p3 = PontosTela[parseInt(Triangulos[i].c) -1];
         var v1, v2, v3, v4;
         var ord = ordem(p1, p2, p3);
         v1 = ord[2];
         v2 = ord[1];
         v3 = ord[0];
         //NÃO ESQUECER DE MUDAR PARA PARSEINTTTTTT
-        v4 = {x: parseFloat(v1.x + (parseFloat(v2.y - v1.y) / parseFloat(v3.y - v1.y)) * (v3.x - v1.x)), y: v2.y};
+        v4 = {x: parseInt(v1.x + (parseFloat(v2.y - v1.y) / parseFloat(v3.y - v1.y)) * (v3.x - v1.x)), y: parseInt(v2.y)};
         Bottom(v1, v2, v4);
         Top(v2, v4, v3);
     }
@@ -327,20 +327,19 @@ function Bottom(v1, v2, v3){
     var invislope2 = (v3.x - v1.x) / (v3.y - v1.y);
     var curx1 = v1.x;
     var curx2 = v1.x; 
-    var aaa = v1.y + ' ' + v2.y + ' ';
-    for(var scanlineY = v1.y; scanlineY <= v2.y; scanlineY++){
-        /*desenharPontos(curx1, scanlineY, curx2);
-        curx1 += invislope1;
-        curx2 += invislope2;*/
-        aaa += scanlineY + '\n';
-    }
+    t += invislope1 + ' ' + invislope2 + ' ' + curx1 + ' ' + curx2;
     var content = document.getElementById('content'); 
-    content.innerText = aaa;
+    content.innerText = t; 
+    for(var scanlineY = v1.y; scanlineY <= v2.y; scanlineY++){
+        desenharPontos(curx1, scanlineY, curx2);
+        curx1 += invislope1;
+        curx2 += invislope2;
+    }
 }
 
 function desenharPontos(curx1, b, curx2){
     for(var a = curx1; a <= curx2; a++){
-        var ponto = {x: a,y: b};
+        var ponto = {x: a, y: b};
         PontosDesenhar.push(ponto);
         //draw();
     }
@@ -394,6 +393,10 @@ function imprimir (){
     var aux6 = '2º ENTREGA \n' + PontosTela.length;
     for (var i  = 0; i < PontosTela.length; i++){
         aux6 += 'PontosTela ' + (i+1) + ': ' + PontosTela[i].x + ' ' + PontosTela[i].y + '\n'; 
+    }
+
+    for(var i = 0; i < PontosDesenhar.length; i++){
+    	aux7 += 'PontosDesenhar ' + (i+1) + ': ' + PontosDesenhar.x + ' ' + PontosDesenhar.y + '\n';
     }
 
     auxT += aux6;
