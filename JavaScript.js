@@ -50,9 +50,9 @@ var alturaJanela = 1000; //MUDAR N ESQUECER
 
 var PontosDesenhar = [];
 var zBuffer = [width][height];
-var profundidade = [];
 var baricentricas = [];
-var vetoresPhong = [];
+var vertices3d =;
+
 
 function resizeCanvas() {
   canvas.width = parseFloat((window.getComputedStyle(canvas).width));
@@ -176,6 +176,22 @@ window.onload = function () {
     }, false);
     
    
+}
+
+function subtracaovetores(vetor1, vetor2){
+	var a = vetor1.a - vetor2.x;
+	var b = vetor1.b - vetor2.y;
+	var c = vetor1.c - vetor2.z;
+	var vetor = {x: a; y: b; z: c};
+	return vetor;
+}
+
+function multvetores(vetor, escalar){
+	var a = vetor.x * escalar;
+	var b = vetor.y * escalar;
+	var c = vetor.z * escalar;
+	vetor = {x: a, y: b, z: c};
+	return vetor;
 }
 
 function setVetor(vetor){
@@ -345,6 +361,7 @@ function desenharPontos(curx1, b, curx2){
         //draw();
     }
 }
+
 function inicioZbuffer(){
 	for(var i = 0; i < width; i++){
 		for(var j = 0; j < height; j++){
@@ -353,23 +370,44 @@ function inicioZbuffer(){
 	}
 }
 
-function profundidadePixel(){
-	for(var i = 0; i < width; i++){
-		for(var j = 0; j < height; j++){
-			
-			
-
-		}
-	}
-}
-
-function coordenadasBaricentricas(pixel){
+function coordenadasBaricentricas(){
 	var alfa,beta,gama;
 	/*parte do sistema(pamella)*/
 	baricentricas[i] = {x: alfa, y: beta, z: gama};
 
 
 }
+
+// funcao que calcula o ponto correspondente ao pixel em coordenadas de mundo
+function pontoCorrespondente(i){
+	var v1 = Pontosvista[parseInt(Triangulos[i].a - 1)];
+	var v2 = Pontosvista[parseInt(Triangulos[i].b - 1)];
+	var v3 = Pontosvista[parseInt(Triangulos[i].c - 1)];
+	vertices3d = {x: v1, y: v2, z: v3}; //salva as normais dos vertices pra usar em phong
+	var a = parseFloat(alfa * v1.x) + parseFloat(beta * v2.x) + parseFloat(gama * v3.x);
+	var b = parseFloat(alfa * v1.y) + parseFloat(beta * v2.y) + parseFloat(gama * v3.y);
+	var c = parseFloat(alfa * v1.z) + parseFloat(beta * v2.z) + parseFloat(gama * v3.z);
+	var p = {x: a, y: b, z: c};
+	return p;
+}
+
+//funcao que calcula a distancia do ponto p ate a camera
+function consultaZbuffer(){
+	ponto = pontoCorrespondente(i);
+	if(ponto.z < zbuffer[ponto.x][ponto.y]){
+		Phong(p);
+	}
+}
+
+function Phong(ponto){
+
+	var L = subtracaovetores(Plvista, ponto);
+	var V = multvetores(ponto, -1);
+	var N = 
+}
+
+
+
 
 //A parte de impressão será removida do projeto final, serve apenas para facilitar nossa vida e a vida dos monitores na correção
 
