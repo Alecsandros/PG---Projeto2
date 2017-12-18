@@ -363,12 +363,39 @@ function profundidadePixel(){
 	}
 }
 
-function coordenadasBaricentricas(pixel){
-	var alfa,beta,gama;
-	/*parte do sistema(pamella)*/
+function coordenadasBaricentricas(){
+	var alfa,beta,gama; // incognitas
+    var pixel, p1, p2, p3;     // vetores
+    var a = P1.x;
+    var b = P2.x;
+    var c = P3.x;
+    var d = P1.y;
+    var e = P2.y;
+    var f = P3.y;
+    var g = 1, h = 1, i = 1;
+    var r1 = 0, r2 = 0, r3 = 1;
+
+   /* det = ((a * e * i) + (b * f * g) + (c * d * h)) - ((c * e * g) + (a * f * h) + (b * d * i))
+    detx = ((r1 * e * i) + (b * f * r3) + (c * r2 * h)) - ((c * e * r3) + (r1 * f * h) + (b * r2 * i))
+    dety = ((a * r2 * i) + (r1 * f * g) + (c * d * r3)) - ((c * r2 * g) + (a * f * r3) + (r1 * d * i))
+    detz = ((a * e * r3) + (b * r2 * g) + (r1 * d * h)) - ((r1 * e * g) + (a * r2 * h) + (b * d * r3))
+*/
+    var det = ((a * e * i) + (b * f * g) + (c * d * h)) - ((c * e * g) + (a * f * h) + (b * d * i));
+    var detAlfa = ((r1 * e * i) + (b * f * r3) + (c * r2 * h)) - ((c * e * r3) + (r1 * f * h) + (b * r2 * i));
+    var detBeta = ((a * r2 * i) + (r1 * f * g) + (c * d * r3)) - ((c * r2 * g) + (a * f * r3) + (r1 * d * i));
+    var detGama = ((a * e * r3) + (b * r2 * g) + (r1 * d * h)) - ((r1 * e * g) + (a * r2 * h) + (b * d * r3));
+	
+    if (det == 0) {
+        // Divisão por zero! Não é possível completar a operação!
+    } else {
+        alfa = (round(detAlfa, 3) / round(det, 3))
+        beta = (round(detBeta, 3) / round(det, 3))
+        gama = (round(detGama, 3) / round(det, 3))
+
+    }
+
+    /*parte do sistema(pamella)*/
 	baricentricas[i] = {x: alfa, y: beta, z: gama};
-
-
 }
 
 //A parte de impressão será removida do projeto final, serve apenas para facilitar nossa vida e a vida dos monitores na correção
