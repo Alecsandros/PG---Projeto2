@@ -49,6 +49,10 @@ var larguraJanela = 1000; //MUDAR N ESQUECER
 var alturaJanela = 1000; //MUDAR N ESQUECER
 
 var PontosDesenhar = [];
+var zBuffer = [width][height];
+var profundidade = [];
+var baricentricas = [];
+var vetoresPhong = [];
 
 function resizeCanvas() {
   canvas.width = parseFloat((window.getComputedStyle(canvas).width));
@@ -340,6 +344,31 @@ function desenharPontos(curx1, b, curx2){
         PontosDesenhar.push(ponto);
         //draw();
     }
+}
+function inicioZbuffer(){
+	for(var i = 0; i < width; i++){
+		for(var j = 0; j < height; j++){
+			zbuffer[i][j] = 9999999;
+		}
+	}
+}
+
+function profundidadePixel(){
+	for(var i = 0; i < width; i++){
+		for(var j = 0; j < height; j++){
+			
+			
+
+		}
+	}
+}
+
+function coordenadasBaricentricas(pixel){
+	var alfa,beta,gama;
+	/*parte do sistema(pamella)*/
+	baricentricas[i] = {x: alfa, y: beta, z: gama};
+
+
 }
 
 //A parte de impressão será removida do projeto final, serve apenas para facilitar nossa vida e a vida dos monitores na correção
