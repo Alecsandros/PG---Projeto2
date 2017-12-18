@@ -11,17 +11,14 @@
             overflow-y: scroll;
             height: 600px;
         }
-        #canvas,
-		#container {
+        #canvas {
 		    width: 100%;
-		    height: 100%;
+		    height: 1000px;
 		    margin: 0;
 		    padding: 0;
 		    border: 0;
+            background: red;
 		}
-		canvas {
-        	background: white;
-     	}
         a {
             text-decoration: none;
             color: blue;
@@ -30,7 +27,6 @@
     </style>
 </head>
 <body>
-    <script language="JavaScript" src="JavaScript.js"></script>
     <h1 align="center"> Corte 2D </h1>    
     <div>
         <a href = "https://drive.google.com/drive/folders/1jxzXKzSCUekBXz9X0J4CJAWGldgDDqmO" target = "_blank"> Download das entradas </a> 
@@ -42,10 +38,9 @@
     <p><b>Selecione a iluminação: </b></p>
     <input type="file" id="txt" /><br/>
     <input type = "button" id = "button" value = "carregar" />
-	<tr>
-		<td><canvas id="canvas"></canvas></td>
-	</tr>
+	<canvas id="canvas"></canvas>
     <b>Impressão</b>
     <div id="content"></div>
+    <script language="JavaScript" src="JavaScript.js"></script>
 </body>
 </html>

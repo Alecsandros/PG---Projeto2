@@ -1,5 +1,5 @@
-var canvas = document.getElementById("canvas");
-//var ctx = canvas.getContext("2d");
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
 var DesenharPontos = [];
 
 var Auxarray = [];
@@ -14,7 +14,7 @@ var aux3 = '';
 var aux4 = '';
 var aux5 = '';
 var aux7 = '';
-var t = '';
+var AUX = true;
 //impressão
 
 var C; 
@@ -45,8 +45,8 @@ var Pontosvista = [];
 var Plvista;
 
 var Pontostela = [];
-var larguraJanela = 1000; //MUDAR N ESQUECER
-var alturaJanela = 1000; //MUDAR N ESQUECER
+var larguraJanela = canvas.width;
+var alturaJanela = canvas.height;
 
 var PontosDesenhar = [];
 
@@ -57,6 +57,9 @@ function resizeCanvas() {
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.moveTo(0,0);
+  ctx.lineTo(200,100);
+  ctx.stroke();
 }
 
 
@@ -74,6 +77,7 @@ window.onload = function () {
         var txtReader = new FileReader();
 
         cfgReader.onload = function (e) {
+        	resizeCanvas();
             Camera = cfgReader.result.split('\n');
             C = setVetor(Camera[0]);
             N = setVetor(Camera[1]);
@@ -142,7 +146,9 @@ window.onload = function () {
             coordenadasTela()
 
             //Chamando o scanline para imprimir os pontos dos triangulos na tela
-            scanLine();
+            /*scanLine();*/
+
+            draw();
 
             imprimir();
             
@@ -166,6 +172,7 @@ window.onload = function () {
 
             imprimir();
 
+
         }
         txtReader.readAsText(txtTobeRead);
 
@@ -185,9 +192,9 @@ function produtoInterno(vetor1,vetor2) {
 }
 
 function produtoVetorial(vetor1, vetor2) {
-    var aux1 = (vetor1.b * vetor2.c) - (vetor2.b * vetor1.c);
-    var aux2 = -1 * ((vetor1.a * vetor2.c) - (vetor2.a * vetor1.c));
-    var aux3 = (vetor1.a * vetor2.b) - (vetor2.a * vetor1.b);
+    var aux1 = (parseFloat(vetor1.b) * parseFloat(vetor2.c)) - ( parseFloat(vetor2.b) * parseFloat(vetor1.c));
+    var aux2 = -1 * (( parseFloat(vetor1.a) * parseFloat(vetor2.c)) - ( parseFloat(vetor2.a) * parseFloat(vetor1.c)));
+    var aux3 = ( parseFloat(vetor1.a) * parseFloat(vetor2.b)) - ( parseFloat(vetor2.a) * parseFloat(vetor1.b));
     return {a: aux1, b: aux2, c: aux3};
 }
 
@@ -207,8 +214,8 @@ function normalTriangulo(triangulo) {
     var vertice1 = Pontos[triangulo.a - 1];
     var vertice2 = Pontos[triangulo.b - 1];
     var vertice3 = Pontos[triangulo.c - 1];
-    var P3P1 = {a: vertice3.a - vertice1.a, b: vertice3.b - vertice1.b, c: vertice3.c - vertice1.c };
-    var P2P1 = {a: vertice2.a - vertice1.a, b: vertice2.b - vertice1.b, c: vertice2.c - vertice1.c };
+    var P3P1 = {a: parseFloat(vertice3.a) - parseFloat(vertice1.a), b: parseFloat(vertice3.b) - parseFloat(vertice1.b), c: parseFloat(vertice3.c) - parseFloat(vertice1.c)};
+    var P2P1 = {a: parseFloat(vertice2.a) - parseFloat(vertice1.a), b: parseFloat(vertice2.b) - parseFloat(vertice1.b), c: parseFloat(vertice2.c) - parseFloat(vertice1.c) };
     var vetorial = produtoVetorial(P2P1, P3P1);
     return normalizacao(vetorial);
 }
@@ -254,9 +261,11 @@ function multMatrizes(matriz){
 }
 
 function coordenadasTela(){
+	var dhx = d/hx;
+	var dhy = d/hy;
     for(var i = 0; i < Pontosvista.length; i++){
-        var a = (d/hx) * Pontosvista[i].a;
-        var b = (d/hy) * Pontosvista[i].b;
+        var a = dhx * Pontosvista[i].a;
+        var b = dhy * Pontosvista[i].b;
         a = a / Pontosvista[i].c;
         b = b / Pontosvista[i].c;
         a = (a + 1) * larguraJanela / 2;
@@ -317,7 +326,7 @@ function Top(v1, v2, v3){
     var curx1 = v3.x;
     var curx2 = v3.x; 
     for(var scanlineY = v3.y; scanlineY > v1.y; scanlineY--){
-        desenharPontos(curx1, scanlineY, curx2);
+        //desenharPontos(curx1, scanlineY, curx2);
         curx1 -= invislope1;
         curx2 -= invislope2;
     }
@@ -328,7 +337,7 @@ function Bottom(v1, v2, v3){
     var curx1 = v1.x;
     var curx2 = v1.x; 
     for(var scanlineY = v1.y; scanlineY <= v2.y; scanlineY++){
-        desenharPontos(curx1, scanlineY, curx2);
+        //desenharPontos(curx1, scanlineY, curx2);
         curx1 += invislope1;
         curx2 += invislope2;
     }
@@ -389,7 +398,7 @@ function imprimir (){
 
     var aux6 = '2º ENTREGA \n';
     for (var i  = 0; i < Pontostela.length; i++){
-        aux6 += 'Pontostela ' + (i+1) + ': ' + Pontostela[i].x + ' ' + Pontostela[i].y + '\n'; 
+        aux6 += 'PontosTela ' + (i+1) + ': ' + Pontostela[i].x + ' ' + Pontostela[i].y + '\n'; 
     }
 
     /*for(var i = 0; i < PontosDesenhar.length; i++){
@@ -401,3 +410,9 @@ function imprimir (){
     var content = document.getElementById('content'); 
     content.innerText = auxT; 
 }
+
+/*setInterval(() => {
+  if(!AUX){
+  	imprimir();
+  }
+}, 1/300);*/
