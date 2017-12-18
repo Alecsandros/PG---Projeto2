@@ -146,7 +146,7 @@ window.onload = function () {
             coordenadasTela()
 
             //Chamando o scanline para imprimir os pontos dos triangulos na tela
-            /*scanLine();*/
+            scanLine();
 
             draw();
 
@@ -286,7 +286,7 @@ function scanLine(){
         v3 = ord[0];
         //NÃO ESQUECER DE MUDAR PARA PARSEINTTTTTT
         v4 = {x: parseInt(v1.x + (parseFloat(v2.y - v1.y) / parseFloat(v3.y - v1.y)) * (v3.x - v1.x)), y: parseInt(v2.y)};
-        Bottom(v1, v2, v4);
+        //Bottom(v1, v2, v4);
         Top(v2, v4, v3);
     }
 }
@@ -324,7 +324,8 @@ function Top(v1, v2, v3){
     var invislope1 = (v3.x - v1.x) / (v3.y - v1.y);
     var invislope2 = (v3.x - v2.x) / (v3.y - v2.y);
     var curx1 = v3.x;
-    var curx2 = v3.x; 
+    var curx2 = v3.x;
+  	PontosDesenhar.push(invislope2);
     for(var scanlineY = v3.y; scanlineY > v1.y; scanlineY--){
         //desenharPontos(curx1, scanlineY, curx2);
         curx1 -= invislope1;
@@ -401,11 +402,13 @@ function imprimir (){
         aux6 += 'PontosTela ' + (i+1) + ': ' + Pontostela[i].x + ' ' + Pontostela[i].y + '\n'; 
     }
 
-    /*for(var i = 0; i < PontosDesenhar.length; i++){
-    	aux7 += 'PontosDesenhar ' + (i+1) + ': ' + PontosDesenhar.x + ' ' + PontosDesenhar.y + '\n';
-    }*/
+    for(var i = 0; i < PontosDesenhar.length; i++){    
+    	//aux7 += 'PontosDesenhar ' + (i+1) + ': ' + PontosDesenhar[i].x + ' ' + PontosDesenhar[i].y + '\n'; 
+    	aux7 += 'PontosDesenhar ' + (i+1) + ': ' + PontosDesenhar[i] + '\n'; 
+	} 
 
     auxT += aux6;
+    auxT += PontosDesenhar.length + '\n';
     auxT += aux7;
     var content = document.getElementById('content'); 
     content.innerText = auxT; 
