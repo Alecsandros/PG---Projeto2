@@ -286,8 +286,14 @@ function scanLine(){
         v3 = ord[0];
         //NÃO ESQUECER DE MUDAR PARA PARSEINTTTTTT
         v4 = {x: parseInt(v1.x + (parseFloat(v2.y - v1.y) / parseFloat(v3.y - v1.y)) * (v3.x - v1.x)), y: parseInt(v2.y)};
-        //Bottom(v1, v2, v4);
-        Top(v2, v4, v3);
+        if (v2.y === v3.y) {
+        	Bottom(v1, v2, v3);
+        } else if (v1.y === v2.y) {
+        	Top(v1, v2, v3);
+        } else {
+        	Bottom(v1, v2, v4);
+        	Top(v2, v4, v3);
+        }
     }
 }
 
