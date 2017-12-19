@@ -304,9 +304,17 @@ function ordem(p1, p2, p3){
     ordem[1] = p2;
     ordem[2] = p3;
     if(p1.y >= p2.y && p1.y >= p3.y){
-       if(p3.y >= p2.y){
+       if(p2.y === p3.y) {
+            if(p2.x < p3.x) {
+                ordem[1] = {x: p3.x, y: p3.y};
+                ordem[2] = {x: p2.x, y: p2.y};
+            } else {
+                ordem[1] = {x: p2.x, y: p2.y};
+                ordem[2] = {x: p3.x, y: p3.y};
+            }
+       } else if (p3.y > p2.y){
             ordem[1] = {x: p3.x, y: p3.y};
-            ordem[2] = {x: p2.x, y: p3.y};
+            ordem[2] = {x: p2.x, y: p2.y};
        }
     } else if (p2.y >= p1.y && p2.y >= p3.y){
         ordem[0] = p2;
@@ -314,6 +322,14 @@ function ordem(p1, p2, p3){
         if(p1.y < p3.y){
             ordem[1] = p3;
             ordem[2] = p1;
+        } else if (p1.y === p3.y) {
+            if (p1.x < p3.x) {
+                ordem[1] = p3;
+                ordem[2] = p1;
+            } else {
+                ordem[1] = p1;
+                ordem[2] = p3;
+            }
         }
     } else if(p3.y >= p1.y && p3.y >= p2.y){
         ordem [0] = p3;
@@ -321,6 +337,14 @@ function ordem(p1, p2, p3){
         if(p2.y < p1.y){
             ordem[1] = p1;
             ordem[2] = p2;
+        } else if (p2.y === p1.y) {
+            if (p2.x < p1.x) {
+                ordem[1] = p1;
+                ordem[2] = p2;
+            } else {
+                ordem[1] = p2;
+                ordem[2] = p1;
+            }
         }
     }
     return ordem;
