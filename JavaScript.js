@@ -45,8 +45,8 @@ var Pontosvista = [];
 var Plvista;
 
 var Pontostela = [];
-var larguraJanela = canvas.width;
-var alturaJanela = canvas.height;
+var larguraJanela = parseInt((window.getComputedStyle(canvas).width));
+var alturaJanela = parseInt((window.getComputedStyle(canvas).height));
 
 var PontosDesenhar = [];
 
@@ -116,7 +116,7 @@ window.onload = function () {
             //Monta a matriz de mudança de base com U, V e N
             montarMatriz();
 
-            imprimir();
+            /*imprimir();*/
 
         }
         cfgReader.readAsText(cfgTobeRead);
@@ -155,7 +155,7 @@ window.onload = function () {
 
             draw();
 
-            imprimir();
+            /*imprimir();*/
             
         }
         byuReader.readAsText(byuTobeRead);
@@ -175,7 +175,7 @@ window.onload = function () {
             coordenadaVistaPl();
 
 
-            imprimir();
+            /*imprimir();*/
 
 
         }
