@@ -60,7 +60,7 @@ function draw() {
     ctx.moveTo(0,0);
     for(var i = 0; i < PontosDesenhar.length-1; i++){
         ctx.beginPath();
-        ctx.arc(PontosDesenhar[i].x, PontosDesenhar[i].y, 3, 0, 2 * Math.PI);
+        ctx.arc(PontosDesenhar[i].x, PontosDesenhar[i].y, 1, 0, 1 * Math.PI);
         ctx.fillStyle = 'black';
         ctx.fill();
     }
@@ -127,10 +127,16 @@ window.onload = function () {
             for(var i = 0; i < vet[0]; i ++){
                 Pontos[i] = setVetor(Objeto[i+1]);
             }
+
             vet0 = parseInt(vet[0]) + 1;
+
+
             for(var i = 0; i < vet[1]; i++){ // de vet[0] a vet[1]-1
                 Triangulos[i] = setVetor(Objeto[i + vet0]);
             }
+
+            var content = document.getElementById('content'); 
+    		content.innerText = Pontos.length + ' ' + Triangulos.length + ' ' + vet[1].length + '\n'; 
 
             //A normal dos vertices inicializada com 0
             for(var i = 0; i < Pontos.length; i++){
@@ -291,12 +297,12 @@ function scanLine(){
         v3 = ord[0];
         v4 = {x: parseInt(v1.x + (parseFloat(v2.y - v1.y) / parseFloat(v3.y - v1.y)) * (v3.x - v1.x)), y: parseInt(v2.y)};
         if (v2.y === v3.y) {
-            Bottom(v1, v2, v3);
+            Bottom(v1, v2, v3, i);
         } else if (v1.y === v2.y) {
-            Top(v1, v2, v3);
+            Top(v1, v2, v3, i);
         } else {
-            Bottom(v1, v2, v4);
-            Top(v2, v4, v3);
+            Bottom(v1, v2, v4, i);
+            Top(v2, v4, v3, i);
         }
     }
 }
@@ -354,30 +360,30 @@ function ordem(p1, p2, p3){
     return ordem;
 }
 
-function Top(v1, v2, v3){
+function Top(v1, v2, v3, i){
     var invislope1 = (v3.x - v1.x) / (v3.y - v1.y);
     var invislope2 = (v3.x - v2.x) / (v3.y - v2.y);
     var curx1 = v3.x;
     var curx2 = v3.x;
-    for(var scanlineY = v3.y; scanlineY >= v1.y; scanlineY--){
-        desenharPontos( parseInt(curx1), parseInt(curx2),scanlineY);
+    for(var scanlineY = v3.y; scanlineY >= v1.y; scanlineY--, i){
+        desenharPontos(parseInt(curx1), parseInt(curx2),scanlineY, i, v1, v2, v3);
         curx1 -= invislope1;
         curx2 -=invislope2;
     }
 }
-function Bottom(v1, v2, v3){
+function Bottom(v1, v2, v3, i){
     var invislope1 = (v2.x - v1.x) / (v2.y - v1.y);
     var invislope2 = (v3.x - v1.x) / (v3.y - v1.y);
     var curx1 = v1.x;
     var curx2 = v1.x; 
-    for(var scanlineY = v1.y; scanlineY <= v2.y; scanlineY++){
-        desenharPontos( parseInt(curx1), parseInt(curx2), scanlineY);
+    for(var scanlineY = v1.y; scanlineY <= v2.y; scanlineY++, i){
+        desenharPontos( parseInt(curx1), parseInt(curx2), scanlineY, i, v1, v2, v3);
         curx1 += invislope1;
         curx2 += invislope2;
     }
 }
 
-function desenharPontos(curx1, curx2, b){
+function desenharPontos(curx1, curx2, b, i, v1, v2, v3){
     if(curx1 > curx2){
         var aux = curx1;
         curx1 = curx2;
@@ -385,6 +391,9 @@ function desenharPontos(curx1, curx2, b){
     }
     for(var a = curx1; a <= curx2; a++){
         var ponto = {x: a, y: b};
+        if(ponto != v1 && ponto != v2 && ponto != v3){
+        	//coordenadasBaricentricas(i, ponto);
+        }
         PontosDesenhar.push(ponto);
     }
 }
@@ -393,6 +402,7 @@ function desenharPontos(curx1, curx2, b){
 
 function imprimir (){
     var auxT;
+    aux2 += Pontos.length + ' ' + Triangulos.length + '\n';
     auxT = aux2;
     aux = 'Objeto: \n';
     for(var i = 0; i < Pontos.length; i ++){
@@ -439,10 +449,10 @@ function imprimir (){
         aux6 += 'PontosTela ' + (i+1) + ': ' + Pontostela[i].x + ' ' + Pontostela[i].y + '\n'; 
     }
 
-    for(var i = 0; i < PontosDesenhar.length; i++){    
+  /*  for(var i = 0; i < PontosDesenhar.length; i++){    
         //aux7 += 'PontosDesenhar ' + (i+1) + ': ' + PontosDesenhar[i].x + ' ' + PontosDesenhar[i].y + '\n'; 
         aux7 += 'PontosDesenhar ' + (i+1) + ': ' + PontosDesenhar[i].x + ' ' + PontosDesenhar[i].y + '\n'; 
-    } 
+    } */
 
     auxT += aux6;
     auxT += PontosDesenhar.length + '\n';
@@ -453,4 +463,4 @@ function imprimir (){
 
 /*setInterval(() => {
   draw();
-}, 1/10000);*/
+}, 1/1000);*/
