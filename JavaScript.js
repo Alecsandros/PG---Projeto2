@@ -53,6 +53,7 @@ var zBuffer = [width][height];
 var profundidade = [];
 var baricentricas = [];
 var vetoresPhong = [];
+var inicio = 0, fim = 0;
 
 function resizeCanvas() {
   canvas.width = parseFloat((window.getComputedStyle(canvas).width));
@@ -363,23 +364,26 @@ function profundidadePixel(){
 	}
 }
 
-function coordenadasBaricentricas(){
-	var alfa,beta,gama; // incognitas
-    var pixel, p1, p2, p3;     // vetores
-    var a = P1.x;
-    var b = P2.x;
-    var c = P3.x;
-    var d = P1.y;
-    var e = P2.y;
-    var f = P3.y;
-    var g = 1, h = 1, i = 1;
-    var r1 = 0, r2 = 0, r3 = 1;
+function coordenadasBaricentricas(i, pixel){
+	var alfa,beta,gama;
+    var pixel;
+    /*for (var o = inicio; o <= fim; o++) {
 
-   /* det = ((a * e * i) + (b * f * g) + (c * d * h)) - ((c * e * g) + (a * f * h) + (b * d * i))
-    detx = ((r1 * e * i) + (b * f * r3) + (c * r2 * h)) - ((c * e * r3) + (r1 * f * h) + (b * r2 * i))
-    dety = ((a * r2 * i) + (r1 * f * g) + (c * d * r3)) - ((c * r2 * g) + (a * f * r3) + (r1 * d * i))
-    detz = ((a * e * r3) + (b * r2 * g) + (r1 * d * h)) - ((r1 * e * g) + (a * r2 * h) + (b * d * r3))
-*/
+    }
+    fim++;
+    inicio = fim;*/
+    var p1 = parseInt(Triangulos[i].a - 1);
+    var p2 = parseInt(Triangulos[i].b - 1);
+    var p3 = parseInt(Triangulos[i].c - 1);
+    var a = p1.x;
+    var b = p2.x;
+    var c = p3.x;
+    var d = p1.y;
+    var e = p2.y;
+    var f = p3.y;
+    var g = 1, h = 1, i = 1;
+    var r1 = pixel.x, r2 = pixel.y, r3 = 1;
+
     var det = ((a * e * i) + (b * f * g) + (c * d * h)) - ((c * e * g) + (a * f * h) + (b * d * i));
     var detAlfa = ((r1 * e * i) + (b * f * r3) + (c * r2 * h)) - ((c * e * r3) + (r1 * f * h) + (b * r2 * i));
     var detBeta = ((a * r2 * i) + (r1 * f * g) + (c * d * r3)) - ((c * r2 * g) + (a * f * r3) + (r1 * d * i));
@@ -388,14 +392,14 @@ function coordenadasBaricentricas(){
     if (det == 0) {
         // Divisão por zero! Não é possível completar a operação!
     } else {
-        alfa = (round(detAlfa, 3) / round(det, 3))
-        beta = (round(detBeta, 3) / round(det, 3))
-        gama = (round(detGama, 3) / round(det, 3))
-
+        alfa = rounddetAlfa /det;
+        beta = detBeta / det;
+        gama = detGama / det;
     }
 
-    /*parte do sistema(pamella)*/
-	baricentricas[i] = {x: alfa, y: beta, z: gama};
+	baricentricas[0] = alfa;
+	baricentricas[1] = beta;
+	baricentricas[2] = gama;
 }
 
 //A parte de impressão será removida do projeto final, serve apenas para facilitar nossa vida e a vida dos monitores na correção
