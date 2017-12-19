@@ -459,20 +459,19 @@ function Phong(ponto,i){
 		
 	}
 	cor = somavetor(ambiental,difusa,especular);
-	//terminar if da cor de phong
-	if(cor.x > 255 || cor.y > 255 && cor.z > 255){
+	
 		if(cor.x > 255){
 			cor.x = 255;
 		}
-		else if(cor.y > 255){
+		if(cor.y > 255){
 			cor.y = 255;
 		}
-		else{
+		if(cor.z > 255){
 			cor.z = 255;
 		}
-	}
-	else if (cor.x > 255 || cor.y > 255 && cor.z > 255) {}
 }
+	
+	
 
 
 function somavetor(vetor1,vetor2, vetor3){
