@@ -51,15 +51,20 @@ var alturaJanela = canvas.height;
 var PontosDesenhar = [];
 
 function resizeCanvas() {
-  canvas.width = parseFloat((window.getComputedStyle(canvas).width));
-  canvas.height = parseFloat((window.getComputedStyle(canvas).height));
+	canvas.width = parseFloat((window.getComputedStyle(canvas).width));
+	canvas.height = parseFloat((window.getComputedStyle(canvas).height));
 }
 
 function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.moveTo(0,0);
-  ctx.lineTo(200,100);
-  ctx.stroke();
+ 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.moveTo(0,0);
+	for(var i = 0; i < PontosDesenhar.length-1; i++){
+		ctx.beginPath();
+    	ctx.arc(PontosDesenhar[i].x, PontosDesenhar[i].y, 3, 0, 2 * Math.PI);
+    	ctx.fillStyle = 'black';
+    	ctx.fill();
+	}
+	ctx.stroke();
 }
 
 
@@ -284,7 +289,6 @@ function scanLine(){
         v1 = ord[2];
         v2 = ord[1];
         v3 = ord[0];
-        //NÃO ESQUECER DE MUDAR PARA PARSEINTTTTTT
         v4 = {x: parseInt(v1.x + (parseFloat(v2.y - v1.y) / parseFloat(v3.y - v1.y)) * (v3.x - v1.x)), y: parseInt(v2.y)};
         if (v2.y === v3.y) {
         	Bottom(v1, v2, v3);
@@ -355,11 +359,10 @@ function Top(v1, v2, v3){
     var invislope2 = (v3.x - v2.x) / (v3.y - v2.y);
     var curx1 = v3.x;
     var curx2 = v3.x;
-  	PontosDesenhar.push(invislope2);
     for(var scanlineY = v3.y; scanlineY > v1.y; scanlineY--){
-        //desenharPontos(curx1, scanlineY, curx2);
-        curx1 -= invislope1;
-        curx2 -= invislope2;
+        desenharPontos(curx1, curx2, scanlineY);
+        curx1 -= parseInt(invislope1);
+        curx2 -= parseInt(invislope2);
     }
 }
 function Bottom(v1, v2, v3){
@@ -368,17 +371,16 @@ function Bottom(v1, v2, v3){
     var curx1 = v1.x;
     var curx2 = v1.x; 
     for(var scanlineY = v1.y; scanlineY <= v2.y; scanlineY++){
-        //desenharPontos(curx1, scanlineY, curx2);
-        curx1 += invislope1;
-        curx2 += invislope2;
+        desenharPontos(curx1, curx2, scanlineY);
+        curx1 += parseInt(invislope1);
+        curx2 += parseInt(invislope2);
     }
 }
 
-function desenharPontos(curx1, b, curx2){
+function desenharPontos(curx1, curx2, b){
     for(var a = curx1; a <= curx2; a++){
         var ponto = {x: a, y: b};
         PontosDesenhar.push(ponto);
-        //draw();
     }
 }
 
@@ -434,7 +436,7 @@ function imprimir (){
 
     for(var i = 0; i < PontosDesenhar.length; i++){    
     	//aux7 += 'PontosDesenhar ' + (i+1) + ': ' + PontosDesenhar[i].x + ' ' + PontosDesenhar[i].y + '\n'; 
-    	aux7 += 'PontosDesenhar ' + (i+1) + ': ' + PontosDesenhar[i] + '\n'; 
+    	aux7 += 'PontosDesenhar ' + (i+1) + ': ' + PontosDesenhar[i].x + ' ' + PontosDesenhar[i].y + '\n'; 
 	} 
 
     auxT += aux6;
@@ -445,7 +447,5 @@ function imprimir (){
 }
 
 /*setInterval(() => {
-  if(!AUX){
-  	imprimir();
-  }
-}, 1/300);*/
+  draw();
+}, 1/10000);*/
