@@ -461,7 +461,7 @@ function coordenadasBaricentricas(i, pixel){
 	baricentricas[0] = alfa;
 	baricentricas[1] = beta;
 	baricentricas[2] = gama;
-	consultaZbuffer(i);
+	consultaZbuffer(i,pixel);
 }
 
 
@@ -479,10 +479,10 @@ function pontoCorrespondente(i){
 }
 
 //funcao que calcula a distancia do ponto p ate a camera
-function consultaZbuffer(i){
+function consultaZbuffer(i,pixel){
 	ponto = pontoCorrespondente(i);
-	if(ponto.z < zbuffer[ponto.x][ponto.y]){
-		Phong(ponto,i);
+	if(ponto.z < zbuffer[pixel.x][pixel.y]){
+		Phong(ponto,i,pixel);
 	}
 }
 function normalpontocorrespondente(i){
@@ -501,7 +501,7 @@ function normalpontocorrespondente(i){
 
 
 
-function Phong(ponto,i){
+function Phong(ponto,i,pixel){
 	var normal, produtodifusa, produtoespecular,potenciaespecular, cor;
 	var ambiental, difusa, especular;
 	var escalarespecular;
@@ -557,7 +557,7 @@ function Phong(ponto,i){
 			cor.z = 255;
 		}
 	var buffer = {a: cor, b: ponto.z};
-	zbuffer[ponto.x][ponto.y] = buffer;
+	zbuffer[pixel.x][pixel.y] = buffer;
 }
 	
 function somavetor(vetor1,vetor2, vetor3){
