@@ -628,7 +628,7 @@ var alturaJanela = 1000; //MUDAR N ESQUECER
 var PontosDesenhar = [];
 var zBuffer = [larguraJanela][alturaJanela];
 var baricentricas = [];
-var vertices3d ;
+var vertices3d;
 
 
 function resizeCanvas() {
@@ -1086,9 +1086,6 @@ function somavetor(vetor1,vetor2, vetor3){
 	var vetor = {x: a, y: b, z: c};
 	return vetor;
 }
-
-
-
 
 //A parte de impressão será removida do projeto final, serve apenas para facilitar nossa vida e a vida dos monitores na correção
 
