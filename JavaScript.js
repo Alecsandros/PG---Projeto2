@@ -49,6 +49,10 @@ var larguraJanela = parseInt((window.getComputedStyle(canvas).width));
 var alturaJanela = parseInt((window.getComputedStyle(canvas).height));
 
 var PontosDesenhar = [];
+var zBuffer = [larguraJanela][alturaJanela];
+var baricentricas = [];
+var vertices3d ;
+
 
 function resizeCanvas() {
     canvas.width = parseFloat((window.getComputedStyle(canvas).width));
@@ -190,6 +194,22 @@ window.onload = function () {
     }, false);
     
    
+}
+
+function subtracaovetores(vetor1, vetor2){
+	var a = vetor1.a - vetor2.x;
+	var b = vetor1.b - vetor2.y;
+	var c = vetor1.c - vetor2.z;
+	var vetor = {x: a, y: b, z: c};
+	return vetor;
+}
+
+function multvetores(vetor, escalar){
+	var a = vetor.x * escalar;
+	var b = vetor.y * escalar;
+	var c = vetor.z * escalar;
+	vetor = {x: a, y: b, z: c};
+	return vetor;
 }
 
 function setVetor(vetor){
@@ -397,6 +417,159 @@ function desenharPontos(curx1, curx2, b, i, v1, v2, v3){
         PontosDesenhar.push(ponto);
     }
 }
+
+function inicioZbuffer(){
+	for(var i = 0; i < width; i++){
+		for(var j = 0; j < height; j++){
+			zbuffer[i][j] = 9999999;
+		}
+	}
+}
+
+function coordenadasBaricentricas(i, pixel){
+	var alfa,beta,gama;
+    var pixel;
+    /*for (var o = inicio; o <= fim; o++) {
+    }
+    fim++;
+    inicio = fim;*/
+    var p1 = parseInt(Triangulos[i].a - 1);
+    var p2 = parseInt(Triangulos[i].b - 1);
+    var p3 = parseInt(Triangulos[i].c - 1);
+    var a = p1.x;
+    var b = p2.x;
+    var c = p3.x;
+    var d = p1.y;
+    var e = p2.y;
+    var f = p3.y;
+    var g = 1, h = 1, i = 1;
+    var r1 = pixel.x, r2 = pixel.y, r3 = 1;
+
+    var det = ((a * e * i) + (b * f * g) + (c * d * h)) - ((c * e * g) + (a * f * h) + (b * d * i));
+    var detAlfa = ((r1 * e * i) + (b * f * r3) + (c * r2 * h)) - ((c * e * r3) + (r1 * f * h) + (b * r2 * i));
+    var detBeta = ((a * r2 * i) + (r1 * f * g) + (c * d * r3)) - ((c * r2 * g) + (a * f * r3) + (r1 * d * i));
+    var detGama = ((a * e * r3) + (b * r2 * g) + (r1 * d * h)) - ((r1 * e * g) + (a * r2 * h) + (b * d * r3));
+	
+    if (det == 0) {
+        // Divisão por zero! Não é possível completar a operação!
+    } else {
+        alfa = rounddetAlfa /det;
+        beta = detBeta / det;
+        gama = detGama / det;
+    }
+
+	baricentricas[0] = alfa;
+	baricentricas[1] = beta;
+	baricentricas[2] = gama;
+	consultaZbuffer(i);
+}
+
+
+// funcao que calcula o ponto correspondente ao pixel em coordenadas de mundo
+function pontoCorrespondente(i){
+	var v1 = Pontosvista[parseInt(Triangulos[i].a - 1)];
+	var v2 = Pontosvista[parseInt(Triangulos[i].b - 1)];
+	var v3 = Pontosvista[parseInt(Triangulos[i].c - 1)];
+	vertices3d = {x: v1, y: v2, z: v3}; //salva as normais dos vertices pra usar em phong
+	var a = parseFloat(baricentricas[0] * v1.a) + parseFloat(baricentricas[1] * v2.a) + parseFloat(baricentricas[2] * v3.a);
+	var b = parseFloat(baricentricas[0] * v1.b) + parseFloat(baricentricas[1] * v2.b) + parseFloat(baricentricas[2] * v3.b);
+	var c = parseFloat(baricentricas[0] * v1.c) + parseFloat(baricentricas[1] * v2.c) + parseFloat(baricentricas[2] * v3.c);
+	var p = {x: a, y: b, z: c};
+	return p;
+}
+
+//funcao que calcula a distancia do ponto p ate a camera
+function consultaZbuffer(i){
+	ponto = pontoCorrespondente(i);
+	if(ponto.z < zbuffer[ponto.x][ponto.y]){
+		Phong(ponto,i);
+	}
+}
+function normalpontocorrespondente(i){
+	var p1 = parseInt(Triangulos[i].a - 1);
+	var p2 = parseInt(Triangulos[i].b - 1);
+	var p3 = parseInt(Triangulos[i].c - 1);
+	var normalv1 = Normalvertice[p1];
+	var normalv2 = Normalvertice[p2];
+	var normalv3 = Normalvertice[p3];
+	var a = parseFloat(baricentricas[0] * normalv1.a) + parseFloat(baricentricas[1] * normalv2.a) + parseFloat(baricentricas[2] * normalv3.a);  //alfa beta e gama serao enviados em um array;
+	var b = parseFloat(baricentricas[0] * normalv1.b) + parseFloat(baricentricas[1] * normalv2.b) + parseFloat(baricentricas[2] * normalv3.b);
+	var c = parseFloat(baricentricas[0] * normalv1.c) + parseFloat(baricentricas[1] * normalv2.c) + parseFloat(baricentricas[2] * normalv3.c);
+	var N = {x: a, y: b, z: c};
+	return N;
+}
+
+
+
+function Phong(ponto,i){
+	var normal, produtodifusa, produtoespecular,potenciaespecular, cor;
+	var ambiental, difusa, especular;
+	var escalarespecular;
+	var L = subtracaovetores(Plvista, ponto);
+	var V = multvetores(ponto, -1);
+	var N = normalpontocorrespondente(i);
+	L = normalizacao(L);
+	V = normalizacao(V);
+	N = normalizacao(N);
+	
+	produtonormal = produtoInterno(V,N);
+	produtodifusa = produtoInterno(N,L);
+	
+	var escalardifusa = (kd * produtodifusa);
+	
+	ambiental = multvetores(Ia,ka);
+	difusa = multvetores(Od, escalardifusa);
+	
+	if(produtonormal < 0){
+		produtonormal = multvetores(N, -1);
+	}
+	if(produtodifusa < 0){
+		difusa = 0;
+		especular = 0;
+	}
+	else {
+		var a = 2 * produtodifusa;
+		var b = multvetores(N,a);
+		var R = subtracaovetores(b,L);
+		R = normalizacao(R);
+		
+		produtoespecular = produtoInterno(R,V);
+		potenciaespecular = Math.pow(produtoespecular,n);
+		escalarespecular = (ks * potenciaespecular);
+		
+		if(produtoespecular < 0){
+			especular = 0;
+		}
+		else{
+			especular = multvetores(Il,escalarespecular); 
+		}
+		
+	}
+	cor = somavetor(ambiental,difusa,especular);
+	
+		if(cor.x > 255){
+			cor.x = 255;
+		}
+		if(cor.y > 255){
+			cor.y = 255;
+		}
+		if(cor.z > 255){
+			cor.z = 255;
+		}
+	var buffer = {a: cor, b: ponto.z};
+	zbuffer[ponto.x][ponto.y] = buffer;
+}
+	
+function somavetor(vetor1,vetor2, vetor3){
+	var a = vetor1.x + vetor2.x + vetor3.x;
+	var b = vetor1.y + vetor2.y + vetor3.y;
+	var c = vetor1.z + vetor2.z + vetor3.z;
+	var vetor = {x: a, y: b, z: c};
+	return vetor;
+}
+
+
+
 
 //A parte de impressão será removida do projeto final, serve apenas para facilitar nossa vida e a vida dos monitores na correção
 
