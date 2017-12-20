@@ -52,7 +52,6 @@ var alturaJanela = parseInt((window.getComputedStyle(canvas).height));
 
 var PontosDesenhar = [];
 var zBuffer = [[]];
-var baricentricas = [];
 var vertices3d ;
 
 
@@ -65,10 +64,12 @@ function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.moveTo(0,0);
     for(var i = 0; i < PontosDesenhar.length-1; i++){
-        ctx.beginPath();
-        ctx.arc(PontosDesenhar[i].x, PontosDesenhar[i].y, 1, 0, 1 * Math.PI);
-        ctx.fillStyle = 'rgb(' + zBuffer[PontosDesenhar[i].x][PontosDesenhar[i].y].x.a + ',' +  zBuffer[PontosDesenhar[i].x][PontosDesenhar[i].y].x.b + ',' + zBuffer[PontosDesenhar[i].x][PontosDesenhar[i].y].x.c + ')';
-        ctx.fill();
+        if(PontosDesenhar[i].x < larguraJanela && PontosDesenhar[i].y < alturaJanela){
+            ctx.beginPath();
+            ctx.arc(PontosDesenhar[i].x, PontosDesenhar[i].y, 1, 0, 1 * Math.PI);
+            ctx.fillStyle = 'rgb(' + parseInt(zBuffer[PontosDesenhar[i].x][PontosDesenhar[i].y].x.a) + ',' + parseInt(zBuffer[PontosDesenhar[i].x][PontosDesenhar[i].y].x.b) + ',' + parseInt(zBuffer[PontosDesenhar[i].x][PontosDesenhar[i].y].x.c) + ')';
+            ctx.fill();
+        }
     }
     ctx.stroke();
 }
@@ -98,34 +99,23 @@ window.onload = function () {
             hx = vet.b;
             hy = vet.c;
 
-            //imprimir
-            aux2 = '1º Carregar arquivos (Objeto(s), iluminação e câmera): \n Camera: \n';
-            aux2 += 'C: ' + C.a + ' ' + C.b + ' ' + C.c + '\n';
-            aux2 += 'Vetor N: ' + N.a + ' ' + N.b + ' ' + N.c + '\n';
-            aux2 += 'Vetor V: ' + V.a + ' ' + V.b + ' ' + V.c + '\n';
-            aux2 += 'd: ' + d + ' hx: ' + hx + ' hy: ' + hy + '\n';
-            //imrpimir
-            
-            //Normalizar N
-            N = normalizacao(N);
-
-            //Ortogonalizar o vetor V
-            var projecaoVN = projecao(V,N);
-            V = {a: V.a - projecaoVN.a, b: V.b - projecaoVN.b, c: V.c - projecaoVN.c};
-
-            //Normaizar V
-            V = normalizacao(V);
-
-            //Produto vetorial para achar U
-            U = produtoVetorial(V,N);
-
-            //Monta a matriz de mudança de base com U, V e N
-            montarMatriz();
-
-            imprimir();
-
         }
         cfgReader.readAsText(cfgTobeRead);
+
+        txtReader.onload = function (e) {
+            Iluminacao = txtReader.result.split('\n');
+            Pl = setVetor(Iluminacao[0]);
+            ka = Iluminacao[1];
+            Ia = setVetor(Iluminacao[2]);
+            kd = Iluminacao[3];
+            Od = setVetor(Iluminacao[4]);
+            ks = Iluminacao[5];
+            Il = setVetor(Iluminacao[6]);
+            n = Iluminacao[7];
+
+
+        }
+        txtReader.readAsText(txtTobeRead);
 
         byuReader.onload = function (e) {
             Objeto = byuReader.result.split('\n');  //de 1 a vet[0]-1
@@ -152,45 +142,53 @@ window.onload = function () {
                 Normaltriangulo[i] = normalTriangulo(Triangulos[i]);
                 normalVertice(i);
             }
-
-            //Cada ponto para coordenada de vista 
-            coordenadasVistaPontos();
-
-            //Cada ponto para coordenada de tela
-            coordenadasTela();
-
-            inicioZbuffer();
-
-            //Chamando o scanline para imprimir os pontos dos triangulos na tela
-            scanLine();
-
-            draw();
-
-            imprimir();
-            
         }
         byuReader.readAsText(byuTobeRead);
 
-        txtReader.onload = function (e) {
-            Iluminacao = txtReader.result.split('\n');
-            Pl = setVetor(Iluminacao[0]);
-            ka = Iluminacao[1];
-            Ia = setVetor(Iluminacao[2]);
-            kd = Iluminacao[3];
-            Od = setVetor(Iluminacao[4]);
-            ks = Iluminacao[5];
-            Il = setVetor(Iluminacao[6]);
-            n = Iluminacao[7];
-
-            //Posicao da fonte de luz de coordenadas de mundo para coordenadas de vista
-            coordenadaVistaPl();
 
 
-            imprimir();
+    }, false);
 
+    var botao2 = document.getElementById('button2');
+    botao2.addEventListener('click', function (e) {
 
-        }
-        txtReader.readAsText(txtTobeRead);
+        //Normalizar N
+        N = normalizacao(N);
+
+        //Ortogonalizar o vetor V
+        var projecaoVN = projecao(V,N);
+        V = {a: V.a - projecaoVN.a, b: V.b - projecaoVN.b, c: V.c - projecaoVN.c};
+
+        //Normaizar V
+        V = normalizacao(V);
+
+        //Produto vetorial para achar U
+        U = produtoVetorial(V,N);
+
+        //Monta a matriz de mudança de base com U, V e N
+        montarMatriz();
+
+        //Posicao da fonte de luz de coordenadas de mundo para coordenadas de vista
+        coordenadaVistaPl();
+
+         //Cada ponto para coordenada de vista 
+        coordenadasVistaPontos();
+
+        //Cada ponto para coordenada de tela
+        coordenadasTela();
+
+        aux3 += zBuffer.length + '\n';
+        aux3 += zBuffer[0].length + '\n';
+        inicioZbuffer();
+        aux3 += zBuffer.length + '\n';
+        aux3 += zBuffer[0].length + '\n';
+
+        //Chamando o scanline para imprimir os pontos dos triangulos na tela
+        scanLine();
+
+        draw();
+
+        imprimir();
 
     }, false);
     
@@ -198,9 +196,6 @@ window.onload = function () {
 }
 
 function subtracaovetores(vetor1, vetor2){
-
-    if (vetor1.a != 0) {
-        aux3 += "oi genteeeeeee";   }
 	var x = vetor1.a - vetor2.a;
 	var y = vetor1.b - vetor2.b;
 	var z = vetor1.c - vetor2.c;
@@ -415,11 +410,11 @@ function desenharPontos(curx1, curx2, b, i, v1, v2, v3){
         curx2 = aux;
     }
     for(var a = curx1; a <= curx2; a++){
-        var ponto = {x: a, y: b};
-        if(ponto != v1 && ponto != v2 && ponto != v3){
-        	coordenadasBaricentricas(i, ponto);
+        var pixel = {x: a, y: b};
+        if(pixel != v1 && pixel != v2 && pixel != v3){
+        	coordenadasBaricentricas(i, pixel);
         }
-        PontosDesenhar.push(ponto);
+        PontosDesenhar.push(pixel);
     }
 }
 
@@ -437,11 +432,7 @@ function inicioZbuffer(){
 
 function coordenadasBaricentricas(i, pixel){
 	var alfa,beta,gama;
-    var pixel;
-    /*for (var o = inicio; o <= fim; o++) {
-    }
-    fim++;
-    inicio = fim;*/
+    var baricentricas = [];
     var p1 = parseInt(Triangulos[i].a - 1);
     var p2 = parseInt(Triangulos[i].b - 1);
     var p3 = parseInt(Triangulos[i].c - 1);
@@ -465,77 +456,79 @@ function coordenadasBaricentricas(i, pixel){
         beta = detBeta / det;
         gama = detGama / det;
     }
-
-	baricentricas[0] = alfa;
-	baricentricas[1] = beta;
-	baricentricas[2] = gama;
-	consultaZbuffer(i,pixel);
+	consultaZbuffer(i,pixel, alfa, beta, gama);
 }
 
 
 // funcao que calcula o ponto correspondente ao pixel em coordenadas de mundo
-function pontoCorrespondente(i){
+function pontoCorrespondente(i, alfa, beta, gama){
 	var v1 = Pontosvista[parseInt(Triangulos[i].a - 1)];
 	var v2 = Pontosvista[parseInt(Triangulos[i].b - 1)];
 	var v3 = Pontosvista[parseInt(Triangulos[i].c - 1)];
-	var x = parseFloat(baricentricas[0] * v1.a) + parseFloat(baricentricas[1] * v2.a) + parseFloat(baricentricas[2] * v3.a);
-	var y = parseFloat(baricentricas[0] * v1.b) + parseFloat(baricentricas[1] * v2.b) + parseFloat(baricentricas[2] * v3.b);
-	var z = parseFloat(baricentricas[0] * v1.c) + parseFloat(baricentricas[1] * v2.c) + parseFloat(baricentricas[2] * v3.c);
+	var x = parseFloat(alfa * v1.a) + parseFloat(beta * v2.a) + parseFloat(gama * v3.a);
+	var y = parseFloat(alfa * v1.b) + parseFloat(beta * v2.b) + parseFloat(gama * v3.b);
+	var z = parseFloat(alfa * v1.c) + parseFloat(beta * v2.c) + parseFloat(gama * v3.c);
 	var p = {a: x, b: y, c: z};
 	return p;
 }
 
 //funcao que calcula a distancia do ponto p ate a camera
-function consultaZbuffer(i,pixel){
-	ponto = pontoCorrespondente(i);
-    if(ponto.c < zBuffer[pixel.x][pixel.y].y){
-        Phong(ponto, i, pixel);
+function consultaZbuffer(i,pixel, alfa, beta, gama){
+	var pontocorrespondente = pontoCorrespondente(i, alfa, beta, gama);
+    var content = document.getElementById('content'); 
+    content.innerText = zBuffer.length + ' ' + zBuffer[440].length + ' ' + pixel.x + ' ' + pixel.y; 
+    if(pixel.x < larguraJanela && pixel.y < alturaJanela && pontocorrespondente.c < zBuffer[pixel.x][pixel.y].y){
+        Phong(pontocorrespondente, i, pixel, alfa, beta, gama);
     }
-	/*if(ponto.z < zbuffer[pixel.x][pixel.y]){
-		Phong(ponto,i,pixel);
-	}*/
 }
-function normalpontocorrespondente(i){
+function normalpontocorrespondente(i, alfa, beta, gama){
 	var p1 = parseInt(Triangulos[i].a - 1);
 	var p2 = parseInt(Triangulos[i].b - 1);
 	var p3 = parseInt(Triangulos[i].c - 1);
 	var normalv1 = Normalvertice[p1];
 	var normalv2 = Normalvertice[p2];
 	var normalv3 = Normalvertice[p3];
-	var x = parseFloat(baricentricas[0] * normalv1.a) + parseFloat(baricentricas[1] * normalv2.a) + parseFloat(baricentricas[2] * normalv3.a);  //alfa beta e gama serao enviados em um array;
-	var y = parseFloat(baricentricas[0] * normalv1.b) + parseFloat(baricentricas[1] * normalv2.b) + parseFloat(baricentricas[2] * normalv3.b);
-	var z = parseFloat(baricentricas[0] * normalv1.c) + parseFloat(baricentricas[1] * normalv2.c) + parseFloat(baricentricas[2] * normalv3.c);
+	var x = parseFloat(alfa * normalv1.a) + parseFloat(beta * normalv2.a) + parseFloat(gama * normalv3.a);  //alfa beta e gama serao enviados em um array;
+	var y = parseFloat(alfa * normalv1.b) + parseFloat(beta * normalv2.b) + parseFloat(gama * normalv3.b);
+	var z = parseFloat(alfa * normalv1.c) + parseFloat(beta * normalv2.c) + parseFloat(gama * normalv3.c);
 	var N = {a: x, b: y, c: z};
 	return N;
 }
 
 
 
-function Phong(ponto,i,pixel){
+function Phong(pontocorrespondente,i,pixel, alfa, beta, gama){
 	var normal, produtodifusa, produtoespecular,potenciaespecular, cor;
 	var ambiental, difusa, especular;
 	var escalarespecular;
-	var L = subtracaovetores(Plvista, ponto);
-	var V = multvetores(ponto, -1);
-	var N = normalpontocorrespondente(i);
+	var L = subtracaovetores(Plvista, pontocorrespondente);
+	var V = multvetores(pontocorrespondente, -1);
+	var N = normalpontocorrespondente(i, alfa, beta, gama);
 	L = normalizacao(L);
 	V = normalizacao(V);
 	N = normalizacao(N);
 	
 	produtonormal = produtoInterno(V,N);
+    if(produtonormal < 0){
+        N = multvetores(N, -1);
+    }
 	produtodifusa = produtoInterno(N,L);
 	
 	var escalardifusa = (kd * produtodifusa);
 	ambiental = multvetores(Ia,ka);
 	difusa = multvetores(Od, escalardifusa);
+    difusa.a *= Il.a;
+    difusa.b *= Il.b;
+    difusa.c *= Il.c;
+    // console.log(difusa);
 	
-	if(produtonormal < 0){
-		produtonormal = multvetores(N, -1);
-	}
+	
 	if(produtodifusa < 0){
+        // console.log("Sem Difusa");
 		difusa = {a: 0, b: 0, c: 0};
 		especular = {a: 0, b: 0, c: 0};
 	} else {
+        // console.log("Com Difusa");
 		var a = 2 * produtodifusa;
 		var b = multvetores(N,a);
 		var R = subtracaovetores(b,L);
@@ -551,9 +544,11 @@ function Phong(ponto,i,pixel){
 		else{
 			especular = multvetores(Il, escalarespecular); 
 		}
-    /*aux3 += produtoespecular + '\n';*/
 		
 	}
+    //console.log(ambiental);
+    //console.log(difusa);
+    console.log(especular);
 	cor = somavetor(ambiental,difusa,especular);
 	
 		if(cor.a > 255){
@@ -565,13 +560,11 @@ function Phong(ponto,i,pixel){
 		if(cor.c > 255){
 			cor.c = 255;
 		}
-	var buffer = {x: cor, y: ponto.c};
+
+	var buffer = {x: cor, y: pontocorrespondente.c};
     zBuffer[pixel.x][pixel.y] = buffer;
 
-    /*var array = zBuffer[pixel.x];
-    array[pixel.y] = buffer;*/
 
-	/*zbuffer[pixel.x][pixel.y] = buffer;*/
 }
 	
 function somavetor(vetor1,vetor2, vetor3){
@@ -585,7 +578,6 @@ function somavetor(vetor1,vetor2, vetor3){
 //A parte de impressão será removida do projeto final, serve apenas para facilitar nossa vida e a vida dos monitores na correção
 
 function imprimir (){
-    var aux = ' ';
     var auxT;
     /*aux3 = larguraJanela + ' ' + alturaJanela + '\n';
     aux3 += 'INICIO ' + zBuffer.length + '\n';
@@ -651,7 +643,7 @@ function imprimir (){
     auxT += PontosDesenhar.length + '\n';
     auxT += aux7;*/
     var content = document.getElementById('content'); 
-    content.innerText = aux; 
+    content.innerText = aux3; 
 }
 
 /*setInterval(() => {
