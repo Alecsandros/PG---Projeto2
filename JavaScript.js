@@ -65,10 +65,13 @@ function draw() {
     ctx.moveTo(0,0);
     for(var i = 0; i < PontosDesenhar.length-1; i++){
         if(PontosDesenhar[i].x < larguraJanela && PontosDesenhar[i].y < alturaJanela){
-            ctx.beginPath();
-            ctx.arc(PontosDesenhar[i].x, PontosDesenhar[i].y, 1, 0, 1 * Math.PI);
-            ctx.fillStyle = 'rgb(' + parseInt(zBuffer[PontosDesenhar[i].x][PontosDesenhar[i].y].x.a) + ',' + parseInt(zBuffer[PontosDesenhar[i].x][PontosDesenhar[i].y].x.b) + ',' + parseInt(zBuffer[PontosDesenhar[i].x][PontosDesenhar[i].y].x.c) + ')';
-            ctx.fill();
+            var imgData = ctx.createImageData(1, 1);
+            imgData.data[0] = parseInt(zBuffer[PontosDesenhar[i].x][PontosDesenhar[i].y].x.a);
+            imgData.data[1] = parseInt(zBuffer[PontosDesenhar[i].x][PontosDesenhar[i].y].x.b);
+            imgData.data[2] = parseInt(zBuffer[PontosDesenhar[i].x][PontosDesenhar[i].y].x.c);
+            imgData.data[3] = 255;
+
+            ctx.putImageData(imgData, PontosDesenhar[i].x, PontosDesenhar[i].y);
         }
     }
     ctx.stroke();
@@ -184,7 +187,7 @@ window.onload = function () {
 
         draw();
 
-        imprimir();
+        /*imprimir();*/
 
     }, false);
     
@@ -415,7 +418,6 @@ function desenharPontos(curx1, curx2, b, i, v1, v2, v3){
 }
 
 function inicioZbuffer(){
-    var cor = {a: 0, b: 0, c: 0};
     for(var i = 0; i < larguraJanela; i++){
         zBuffer[i] = [];
     }
