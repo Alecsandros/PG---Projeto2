@@ -51,7 +51,7 @@ var larguraJanela = parseInt((window.getComputedStyle(canvas).width));
 var alturaJanela = parseInt((window.getComputedStyle(canvas).height));
 
 var PontosDesenhar = [];
-var zBuffer = [[]];
+var zBuffer = new Array (larguraJanela);
 var vertices3d ;
 
 
@@ -177,11 +177,7 @@ window.onload = function () {
         //Cada ponto para coordenada de tela
         coordenadasTela();
 
-        aux3 += zBuffer.length + '\n';
-        aux3 += zBuffer[0].length + '\n';
         inicioZbuffer();
-        aux3 += zBuffer.length + '\n';
-        aux3 += zBuffer[0].length + '\n';
 
         //Chamando o scanline para imprimir os pontos dos triangulos na tela
         scanLine();
@@ -196,19 +192,19 @@ window.onload = function () {
 }
 
 function subtracaovetores(vetor1, vetor2){
-	var x = vetor1.a - vetor2.a;
-	var y = vetor1.b - vetor2.b;
-	var z = vetor1.c - vetor2.c;
-	var vetor = {a: x, b: y, c: z};
-	return vetor;
+    var x = vetor1.a - vetor2.a;
+    var y = vetor1.b - vetor2.b;
+    var z = vetor1.c - vetor2.c;
+    var vetor = {a: x, b: y, c: z};
+    return vetor;
 }
 
 function multvetores(vetor, escalar){
-	var x = vetor.a * escalar;
-	var y = vetor.b * escalar;
-	var z = vetor.c * escalar;
-	vetor = {a: x, b: y, c: z};
-	return vetor;
+    var x = vetor.a * escalar;
+    var y = vetor.b * escalar;
+    var z = vetor.c * escalar;
+    vetor = {a: x, b: y, c: z};
+    return vetor;
 }
 
 function setVetor(vetor){
@@ -412,26 +408,28 @@ function desenharPontos(curx1, curx2, b, i, v1, v2, v3){
     for(var a = curx1; a <= curx2; a++){
         var pixel = {x: a, y: b};
         if(pixel != v1 && pixel != v2 && pixel != v3){
-        	coordenadasBaricentricas(i, pixel);
+            coordenadasBaricentricas(i, pixel);
         }
         PontosDesenhar.push(pixel);
     }
 }
 
 function inicioZbuffer(){
-    var a = [];
     var cor = {a: 0, b: 0, c: 0};
-    for(var i = 0; i < alturaJanela; i++){
-        a[i] = {x: cor, y: 9999999};
-    }
-
     for(var i = 0; i < larguraJanela; i++){
+        zBuffer[i] = [];
+    }
+    for(var i = 0; i < larguraJanela; i++){
+        var a = [];
+        for(var j = 0; j < alturaJanela; j++){
+            a[j] = {x: {a: 0, b: 0, c: 0}, y: 99999999};
+        }
         zBuffer[i] = a;
     }
 }
 
 function coordenadasBaricentricas(i, pixel){
-	var alfa,beta,gama;
+    var alfa,beta,gama;
     var baricentricas = [];
     var p1 = parseInt(Triangulos[i].a - 1);
     var p2 = parseInt(Triangulos[i].b - 1);
@@ -448,7 +446,7 @@ function coordenadasBaricentricas(i, pixel){
     var detAlfa = ((r1 * e * i) + (b * f * r3) + (c * r2 * h)) - ((c * e * r3) + (r1 * f * h) + (b * r2 * i));
     var detBeta = ((a * r2 * i) + (r1 * f * g) + (c * d * r3)) - ((c * r2 * g) + (a * f * r3) + (r1 * d * i));
     var detGama = ((a * e * r3) + (b * r2 * g) + (r1 * d * h)) - ((r1 * e * g) + (a * r2 * h) + (b * d * r3));
-	
+    
     if (det == 0) {
         // Divisão por zero! Não é possível completar a operação!
     } else {
@@ -456,137 +454,131 @@ function coordenadasBaricentricas(i, pixel){
         beta = detBeta / det;
         gama = detGama / det;
     }
-	consultaZbuffer(i,pixel, alfa, beta, gama);
+    consultaZbuffer(i,pixel, alfa, beta, gama);
 }
 
 
 // funcao que calcula o ponto correspondente ao pixel em coordenadas de mundo
 function pontoCorrespondente(i, alfa, beta, gama){
-	var v1 = Pontosvista[parseInt(Triangulos[i].a - 1)];
-	var v2 = Pontosvista[parseInt(Triangulos[i].b - 1)];
-	var v3 = Pontosvista[parseInt(Triangulos[i].c - 1)];
-	var x = parseFloat(alfa * v1.a) + parseFloat(beta * v2.a) + parseFloat(gama * v3.a);
-	var y = parseFloat(alfa * v1.b) + parseFloat(beta * v2.b) + parseFloat(gama * v3.b);
-	var z = parseFloat(alfa * v1.c) + parseFloat(beta * v2.c) + parseFloat(gama * v3.c);
-	var p = {a: x, b: y, c: z};
-	return p;
+    var v1 = Pontosvista[parseInt(Triangulos[i].a - 1)];
+    var v2 = Pontosvista[parseInt(Triangulos[i].b - 1)];
+    var v3 = Pontosvista[parseInt(Triangulos[i].c - 1)];
+    var x = parseFloat(alfa * v1.a) + parseFloat(beta * v2.a) + parseFloat(gama * v3.a);
+    var y = parseFloat(alfa * v1.b) + parseFloat(beta * v2.b) + parseFloat(gama * v3.b);
+    var z = parseFloat(alfa * v1.c) + parseFloat(beta * v2.c) + parseFloat(gama * v3.c);
+    var p = {a: x, b: y, c: z};
+    return p;
 }
 
 //funcao que calcula a distancia do ponto p ate a camera
 function consultaZbuffer(i,pixel, alfa, beta, gama){
-	var pontocorrespondente = pontoCorrespondente(i, alfa, beta, gama);
-    var content = document.getElementById('content'); 
-    content.innerText = zBuffer.length + ' ' + zBuffer[440].length + ' ' + pixel.x + ' ' + pixel.y; 
+    var pontocorrespondente = pontoCorrespondente(i, alfa, beta, gama);
     if(pixel.x < larguraJanela && pixel.y < alturaJanela && pontocorrespondente.c < zBuffer[pixel.x][pixel.y].y){
         Phong(pontocorrespondente, i, pixel, alfa, beta, gama);
     }
 }
 function normalpontocorrespondente(i, alfa, beta, gama){
-	var p1 = parseInt(Triangulos[i].a - 1);
-	var p2 = parseInt(Triangulos[i].b - 1);
-	var p3 = parseInt(Triangulos[i].c - 1);
-	var normalv1 = Normalvertice[p1];
-	var normalv2 = Normalvertice[p2];
-	var normalv3 = Normalvertice[p3];
-	var x = parseFloat(alfa * normalv1.a) + parseFloat(beta * normalv2.a) + parseFloat(gama * normalv3.a);  //alfa beta e gama serao enviados em um array;
-	var y = parseFloat(alfa * normalv1.b) + parseFloat(beta * normalv2.b) + parseFloat(gama * normalv3.b);
-	var z = parseFloat(alfa * normalv1.c) + parseFloat(beta * normalv2.c) + parseFloat(gama * normalv3.c);
-	var N = {a: x, b: y, c: z};
-	return N;
+    var p1 = parseInt(Triangulos[i].a - 1);
+    var p2 = parseInt(Triangulos[i].b - 1);
+    var p3 = parseInt(Triangulos[i].c - 1);
+    var normalv1 = Normalvertice[p1];
+    var normalv2 = Normalvertice[p2];
+    var normalv3 = Normalvertice[p3];
+    var x = parseFloat(alfa * normalv1.a) + parseFloat(beta * normalv2.a) + parseFloat(gama * normalv3.a);  //alfa beta e gama serao enviados em um array;
+    var y = parseFloat(alfa * normalv1.b) + parseFloat(beta * normalv2.b) + parseFloat(gama * normalv3.b);
+    var z = parseFloat(alfa * normalv1.c) + parseFloat(beta * normalv2.c) + parseFloat(gama * normalv3.c);
+    var N = {a: x, b: y, c: z};
+    return N;
 }
 
 
 
 function Phong(pontocorrespondente,i,pixel, alfa, beta, gama){
-	var normal, produtodifusa, produtoespecular,potenciaespecular, cor;
-	var ambiental, difusa, especular;
-	var escalarespecular;
-	var L = subtracaovetores(Plvista, pontocorrespondente);
-	var V = multvetores(pontocorrespondente, -1);
-	var N = normalpontocorrespondente(i, alfa, beta, gama);
-	L = normalizacao(L);
-	V = normalizacao(V);
-	N = normalizacao(N);
-	
-	produtonormal = produtoInterno(V,N);
+    var normal, produtodifusa, produtoespecular,potenciaespecular, cor;
+    var ambiental, difusa, especular;
+    var escalarespecular;
+    var L = subtracaovetores(Plvista, pontocorrespondente);
+    var V = multvetores(pontocorrespondente, -1);
+    var N = normalpontocorrespondente(i, alfa, beta, gama);
+    L = normalizacao(L);
+    V = normalizacao(V);
+    N = normalizacao(N);
+    
+    produtonormal = produtoInterno(V,N);
     if(produtonormal < 0){
         N = multvetores(N, -1);
     }
-	produtodifusa = produtoInterno(N,L);
-	
-	var escalardifusa = (kd * produtodifusa);
-	ambiental = multvetores(Ia,ka);
-	difusa = multvetores(Od, escalardifusa);
+    produtodifusa = produtoInterno(N,L);
+    
+    var escalardifusa = (kd * produtodifusa);
+    ambiental = multvetores(Ia,ka);
+    difusa = multvetores(Od, escalardifusa);
     difusa.a *= Il.a;
     difusa.b *= Il.b;
     difusa.c *= Il.c;
-    // console.log(difusa);
-	
-	
-	if(produtodifusa < 0){
-        // console.log("Sem Difusa");
-		difusa = {a: 0, b: 0, c: 0};
-		especular = {a: 0, b: 0, c: 0};
-	} else {
-        // console.log("Com Difusa");
-		var a = 2 * produtodifusa;
-		var b = multvetores(N,a);
-		var R = subtracaovetores(b,L);
-		R = normalizacao(R);
-		
-		produtoespecular = produtoInterno(R,V);
-		potenciaespecular = Math.pow(produtoespecular,n);
-		escalarespecular = (ks * potenciaespecular);
-		
-		if(produtoespecular < 0){
-			especular = {a: 0, b: 0, c: 0};
-		}
-		else{
-			especular = multvetores(Il, escalarespecular); 
-		}
-		
-	}
-    //console.log(ambiental);
-    //console.log(difusa);
-    console.log(especular);
-	cor = somavetor(ambiental,difusa,especular);
-	
-		if(cor.a > 255){
-			cor.a = 255;
-		}
-		if(cor.b > 255){
-			cor.b = 255;
-		}
-		if(cor.c > 255){
-			cor.c = 255;
-		}
+    
+    
+    if(produtodifusa < 0){
+        difusa = {a: 0, b: 0, c: 0};
+        especular = {a: 0, b: 0, c: 0};
+    } else {
+        var a = 2 * produtodifusa;
+        var b = multvetores(N,a);
+        var R = subtracaovetores(b,L);
+        R = normalizacao(R);
+        
+        produtoespecular = produtoInterno(R,V);
+        potenciaespecular = Math.pow(produtoespecular,n);
+        escalarespecular = (ks * potenciaespecular);
+        
+        if(produtoespecular < 0){
+            especular = {a: 0, b: 0, c: 0};
+        }
+        else{
+            especular = multvetores(Il, escalarespecular); 
+        }
+        
+    }
+    cor = somavetor(ambiental,difusa,especular);
+    
+        if(cor.a > 255){
+            cor.a = 255;
+        }
+        if(cor.b > 255){
+            cor.b = 255;
+        }
+        if(cor.c > 255){
+            cor.c = 255;
+        }
 
-	var buffer = {x: cor, y: pontocorrespondente.c};
+    var buffer = {x: cor, y: pontocorrespondente.c};
     zBuffer[pixel.x][pixel.y] = buffer;
 
 
 }
-	
+    
 function somavetor(vetor1,vetor2, vetor3){
-	var x = vetor1.a + vetor2.a + vetor3.a;
-	var y = vetor1.b + vetor2.b + vetor3.b;
-	var z = vetor1.c + vetor2.c + vetor3.c;
-	var vetor = {a: x, b: y, c: z};
-	return vetor;
+    var x = vetor1.a + vetor2.a + vetor3.a;
+    var y = vetor1.b + vetor2.b + vetor3.b;
+    var z = vetor1.c + vetor2.c + vetor3.c;
+    var vetor = {a: x, b: y, c: z};
+    return vetor;
 }
 
 //A parte de impressão será removida do projeto final, serve apenas para facilitar nossa vida e a vida dos monitores na correção
 
 function imprimir (){
     var auxT;
-    /*aux3 = larguraJanela + ' ' + alturaJanela + '\n';
-    aux3 += 'INICIO ' + zBuffer.length + '\n';
-    for(var i of zBuffer){
-        for (var j of i){
-            aux3 += j.x.a + ' ' + j.x.b + ' ' + j.x.c + ' ' + j.y + '\n';
+    aux3 = larguraJanela + ' ' + alturaJanela + '\n';
+    aux3 += zBuffer.length + '\n';
+    aux3 += zBuffer[0].length + '\n';
+    for(var i in zBuffer){
+        for(var j in zBuffer){
+            aux3 += zBuffer[i][j].y + ' ';
         }
+        aux3 += '\n';
     }
-*/
+
     /*aux2 += Pontos.length + ' ' + Triangulos.length + '\n';
     auxT = aux2;
     aux = 'Objeto: \n';
@@ -612,8 +604,6 @@ function imprimir (){
     aux3 += 'Vetor V(ortogonalizado + normalizado): ' + V.a + '  ' + V.b + '  ' + V.c + '\n';
     aux3 += 'Vetor U: ' + U.a + '  ' + U.b + '  ' + U.c + '\n';
     auxT += '\n\n 3º Preparar a câmera:\n' + aux3;
-
-
     for (var i = 0; i < Triangulos.length; i++){
         aux4 += 'Normaltriangulo ' + (i+1) + ': ' + Normaltriangulo[i].a + '  ' + Normaltriangulo[i].b + '  ' + Normaltriangulo[i].c + '\n';
     }
@@ -621,19 +611,15 @@ function imprimir (){
         aux4 += 'Normalvertice ' + (i+1) + ': ' + Normalvertice[i].a + '  ' + Normalvertice[i].b + '  ' + Normalvertice[i].c + '\n';
     }
     auxT += '\n\n 4º Calcular a normal do triângulo e dos vérties: \n ' + aux4; 
-
     aux5 = 'Cordenada de vista Pl: ' + Plvista.a + '  ' + Plvista.b + '  ' + Plvista.c + '\n';
-
     for(var i = 0; i < Pontos.length; i++){
         aux5 += 'Pontosvista ' + (i+1) + ': ' + Pontosvista[i].a + '  ' + Pontosvista[i].b + '  ' + Pontosvista[i].c + '\n';
     }
     auxT += '\n\n 5º Fazer a mudança de coordenadas de mundo para coordenadas de vista: \n ' + aux5; 
-
     var aux6 = '2º ENTREGA \n';
     for (var i  = 0; i < Pontostela.length; i++){
         aux6 += 'PontosTela ' + (i+1) + ': ' + Pontostela[i].x + ' ' + Pontostela[i].y + '\n'; 
     }
-
   /*  for(var i = 0; i < PontosDesenhar.length; i++){    
         //aux7 += 'PontosDesenhar ' + (i+1) + ': ' + PontosDesenhar[i].x + ' ' + PontosDesenhar[i].y + '\n'; 
         aux7 += 'PontosDesenhar ' + (i+1) + ': ' + PontosDesenhar[i].x + ' ' + PontosDesenhar[i].y + '\n'; 
