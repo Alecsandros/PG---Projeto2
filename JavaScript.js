@@ -440,11 +440,11 @@ function coordenadasBaricentricas(i, pixel){
     var d = Pontostela[p1].y;
     var e = Pontostela[p2].y;
     var f = Pontostela[p3].y;
-    var g = 1, h = 1, i = 1;
+    var g = 1, h = 1, k = 1;
     var r1 = pixel.x, r2 = pixel.y, r3 = 1;
-    var det =  ((a * e * i) + (b * f * g) + (c * d * h)) - ((c * e * g) + (a * f * h) + (b * d * i));
-    var detAlfa = ((r1 * e * i) + (b * f * r3) + (c * r2 * h)) - ((c * e * r3) + (r1 * f * h) + (b * r2 * i));
-    var detBeta = ((a * r2 * i) + (r1 * f * g) + (c * d * r3)) - ((c * r2 * g) + (a * f * r3) + (r1 * d * i));
+    var det =  ((a * e * k) + (b * f * g) + (c * d * h)) - ((c * e * g) + (a * f * h) + (b * d * k));
+    var detAlfa = ((r1 * e * k) + (b * f * r3) + (c * r2 * h)) - ((c * e * r3) + (r1 * f * h) + (b * r2 * k));
+    var detBeta = ((a * r2 * k) + (r1 * f * g) + (c * d * r3)) - ((c * r2 * g) + (a * f * r3) + (r1 * d * k));
     var detGama = ((a * e * r3) + (b * r2 * g) + (r1 * d * h)) - ((r1 * e * g) + (a * r2 * h) + (b * d * r3));
     
     if (det == 0) {
