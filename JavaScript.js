@@ -54,6 +54,10 @@ var PontosDesenhar = [];
 var zBuffer = new Array (larguraJanela);
 var vertices3d ;
 
+var TriangulosR = [];
+var PontosvistaR = [];
+var PontostelaR = [];
+
 
 function resizeCanvas() {
     canvas.width = parseFloat((window.getComputedStyle(canvas).width));
@@ -151,8 +155,7 @@ window.onload = function () {
         PontosDesenhar.length = 0;
         //Normalizar N
         N = normalizacao(N);
-        console.log(N);
-
+        
         //Ortogonalizar o vetor V
         var projecaoVN = projecao(V,N);
         V = {a: V.a - projecaoVN.a, b: V.b - projecaoVN.b, c: V.c - projecaoVN.c};
@@ -169,8 +172,11 @@ window.onload = function () {
         //Posicao da fonte de luz de coordenadas de mundo para coordenadas de vista
         coordenadaVistaPl();
 
-         //Cada ponto para coordenada de vista 
+        //Cada ponto para coordenada de vista 
         coordenadasVistaPontos();
+        console.log(C);
+        console.log(Pontos);
+        console.log(Pontosvista);
 
         //A normal dos vertices inicializada com 0
         for(var i = 0; i < Pontos.length; i++){
@@ -187,6 +193,9 @@ window.onload = function () {
         //Cada ponto para coordenada de tela
         coordenadasTela();
 
+        //cortartriangulos();
+        //definirtriangulos();
+
         inicioZbuffer();
 
         //Chamando o scanline para imprimir os pontos dos triangulos na tela
@@ -197,6 +206,273 @@ window.onload = function () {
     }, false);
     
    
+}
+
+function definirtriangulos(){
+    Triangulos.length = 0;
+    PontosvistaR.length = 0;
+    PontostelaR.length = 0;
+
+    for(var i = 0; i < TriangulosR; i++){
+        Triangulos[i] = TriangulosR[i];
+    }
+
+    for(var i = 0; i < PontosvistaR; i++){
+        Pontosvista[i] = PontosvistaR[i];
+    }
+
+    for(var i = 0; i < PontostelaR; i++){
+        Pontostela[i] = PontostelaR[i];
+    }
+}
+
+function cortartriangulos (){ 
+    for(var i in Triangulos){ 
+        var p1 = Triangulos[i].a - 1; 
+        var p2 = Triangulos[i].b - 1; 
+        var p3 = Triangulos[i].c - 1; 
+        var v1 = Pontostela[p1]; 
+        var v2 = Pontostela[p2]; 
+        var v3 = Pontostela[p3]; 
+        var c1 = codificar(v1); 
+        var c2 = codificar(v2); 
+        var c3 = codificar(v3); 
+        if(v1 === 0 && v2 === 0 && v3 === 0){ 
+            var triangulo = {a: PontosvistaR.length, b: PontosvistaR.length+1, c: PontosvistaR.length+2};
+            PontosvistaR.push(Pontosvista[p1]);
+            PontosvistaR.push(Pontosvista[p2]);
+            PontosvistaR.push(Pontosvista[p3]);
+            PontostelaR.push(v1);
+            PontostelaR.push(v2);
+            PontostelaR.push(v3);
+            TriangulosR.push(triangulo); 
+        } else { 
+            var A1 = vertice(v1, v2, c1, c2); 
+            var A2 = vertice(v2, v3, c2, c3); 
+            var A3 = vertice(v3, v1, c3, c1); 
+            var A = criararray(A1, A2, A3);
+            criartriangulo(A); 
+        } 
+    } 
+} 
+
+function codificar (v){
+    var cod = 0;
+    if(v.y < 0){ //Ponto acima da JS
+            cod = 1;
+    } else if (v.y > alturaJanela){ //Ponto abaixo da JS
+            cod = 2;
+    }
+    if(v.x > larguraJanela){ //Ponto a direita da JS
+            cod += 4;
+    } else if (v.x < 0){ //Ponto a esquerda da JS
+            cod += 8;
+    }
+    return cod;
+}
+
+function vertice(v1, v2, c1, c2){
+  var auxVertice = [];
+    if (c1 === 0 && c2 === 0) {
+        auxVertice.push({x: v1.x, y: v1.y});
+    auxVertice.push({x: v2.x, y: v2.y});
+  } else if (c1!= 0 && c2!= 0) {
+    auxVertice.push({x: -1, y: -1});
+    auxVertice.push({x: -1, y: -1});
+  } else {
+    auxVertice = corte(v1,v2,c1,c2);
+  }
+  return auxVertice;
+}
+
+function corte(v1, v2, c1, c2) {
+  var P = [];
+  if (c1 == 8 || c1 == 9 || c1 == 10) {
+    v1 = IntersecaoEsq(v1,v2);
+  } else if (c2 == 8 || c2 == 9 || c2 == 10) {
+    v2 = IntersecaoEsq(v1,v2);
+  } 
+  if (c1 == 4 || c1 == 5 || c1 == 6) {
+    v1 = IntersecaoDir(v1,v2);
+  } else if (c2 == 4 || c2 == 5 || c2 == 6) {
+    v2 = IntersecaoDir(v1,v2);
+  } 
+  if (c1 == 1 || c1 == 5 || c1 == 9) {
+    v1 = IntersecaoSup(v1,v2);
+  } else if (c2 == 1 || c2 == 5 || c2 == 9) {
+    v2 = IntersecaoSup(v1,v2);
+  }
+  if (c1 == 2 || c1 == 6 || c1 == 10) {
+    v1 = IntersecaoInf(v1,v2);
+  } else if (c2 == 2 || c2 == 6 || c2 == 10) {
+    v2 = IntersecaoInf(v1,v2);
+  }
+  P.push({x:v1.x, y:v1.y});
+  P.push({x:v2.x, y:v2.y});
+  return P;
+}
+
+
+function IntersecaoEsq(v1, v2) {
+  var x_int = 0;
+  var m1 = (v2.y - v1.y) / (v2.x - v1.x); 
+  var y_int = v1.y + (0 - v1.x) * m1;
+  return {x: x_int, y: y_int};
+}
+
+function IntersecaoDir(v1, v2) {
+  var x_int = larguraJanela;
+  var m1 = (v2.y - v1.y) / (v2.x - v1.x); 
+  var y_int = v1.y + (larguraJanela - v1.x) * m1;
+  return {x: x_int, y: y_int};
+}
+
+function IntersecaoSup(v1, v2) {
+  var m2 = (v2.x - v1.x) / (v2.y - v1.y);
+  var x_int = v1.x + (alturaJanela - v1.y) * m2;
+  var y_int = alturaJanela;
+  return {x: x_int, y: y_int};
+}
+
+function IntersecaoInf(v1, v2) {
+  var m2 = (v2.x - v1.x) / (v2.y - v1.y);
+  var x_int = v1.x + (0 - v1.y) * m2;
+  var y_int = 0;
+  return {x: x_int, y: y_int};
+}
+
+function criararray(A1, A2, A3){
+    var A = [];
+    if(A1[0].X != -1){
+        A.push(A1[0]);
+    }
+    if(A1[1].x != -1){
+        A.push(A1[1])
+    }
+    if(A2[0].x != -1 && A2[0].x != A1[1].x && A2[0].y != A1[1].y){
+        A.push(A2[0]);
+    }
+    if(A2[1].x != -1){
+        A.push(A2[1]);
+    }
+    if(A3[0].x != -1 && A3[0].x != A2[1].x && A3[0].y != A2[1].y){
+        A.push(A3[0]);
+    }
+    if(A3[1].x != -1 && A3[1].x != A1[0].x && A3[1].y != A1[0].y){
+        A.push(A3[1]);
+    }
+    return A;
+}
+
+function criartriangulo(A){ //mudar isso pra se adequar a nova coisa
+    if(A.length === 3){
+
+        var triangulo = {a: PontostelaR.length, b: PontostelaR.length+1, c: PontostelaR.length+2};
+        PontostelaR.push(A[0]);
+        PontostelaR.push(A[1]);
+        PontostelaR.push(A[2]);
+        TriangulosR.push(triangulo);
+        var pv1 = calcularponto3D(TriangulosR.length-1, A[0]);
+        var pv2 = calcularponto3D(TriangulosR.length-1, A[1]);
+        var pv3 = calcularponto3D(TriangulosR.length-1, A[2]);
+        PontosvistaR.push(pv1);
+        PontosvistaR.push(pv2);
+        PontosvistaR.push(pv3);
+
+    
+    } else if(A.length === 4) {
+
+        var triangulo = {a: PontostelaR.length, b: PontostelaR.length+1, c: PontostelaR.length+2};
+        PontostelaR.push(A[0]);
+        PontostelaR.push(A[1]);
+        PontostelaR.push(A[2]);
+        TriangulosR.push(triangulo);
+        var pv1 = calcularponto3D(TriangulosR.length-1, A[0]);
+        var pv2 = calcularponto3D(TriangulosR.length-1, A[1]);
+        var pv3 = calcularponto3D(TriangulosR.length-1, A[2]);
+        PontosvistaR.push(pv1);
+        PontosvistaR.push(pv2);
+        PontosvistaR.push(pv3);
+
+        var triangulo2 = {a: PontostelaR.length, b: PontostelaR.length+1, c: PontostelaR.length+2};
+        PontostelaR.push(A[2]);
+        PontostelaR.push(A[3]);
+        PontostelaR.push(A[0]);
+        TriangulosR.push(triangulo2);
+        var pv4 = calcularponto3D(TriangulosR.length-1, A[2]);
+        var pv6 = calcularponto3D(TriangulosR.length-1, A[3]);
+        var pv6 = calcularponto3D(TriangulosR.length-1, A[0]);
+        PontosvistaR.push(pv4);
+        PontosvistaR.push(pv5);
+        PontosvistaR.push(pv6);
+
+    } else if(A.length == 5) {
+
+        var triangulo = {a: PontostelaR.length, b: PontostelaR.length+1, c: PontostelaR.length+2};
+        PontostelaR.push(A[0]);
+        PontostelaR.push(A[1]);
+        PontostelaR.push(A[2]);
+        TriangulosR.push(triangulo);
+        var pv1 = calcularponto3D(TriangulosR.length-1, A[0]);
+        var pv2 = calcularponto3D(TriangulosR.length-1, A[1]);
+        var pv3 = calcularponto3D(TriangulosR.length-1, A[2]);
+        PontosvistaR.push(pv1);
+        PontosvistaR.push(pv2);
+        PontosvistaR.push(pv3);
+
+        var triangulo2 = {a: PontostelaR.length, b: PontostelaR.length+1, c: PontostelaR.length+2};
+        PontostelaR.push(A[2]);
+        PontostelaR.push(A[3]);
+        PontostelaR.push(A[4]);
+        TriangulosR.push(triangulo2);
+        var pv4 = calcularponto3D(TriangulosR.length-1, A[2]);
+        var pv5 = calcularponto3D(TriangulosR.length-1, A[3]);
+        var pv6 = calcularponto3D(TriangulosR.length-1, A[4]);
+        PontosvistaR.push(pv4);
+        PontosvistaR.push(pv5);
+        PontosvistaR.push(pv6);
+
+        var triangulo3 = {a: PontostelaR.length, b: PontostelaR.length+1, c: PontostelaR.length+2};
+        PontostelaR.push(A[4]);
+        PontostelaR.push(A[0]);
+        PontostelaR.push(A[2]);
+        TriangulosR.push(triangulo3);
+        var pv7 = calcularponto3D(TriangulosR.length-1, A[4]);
+        var pv8 = calcularponto3D(TriangulosR.length-1, A[0]);
+        var pv9 = calcularponto3D(TriangulosR.length-1, A[2]);
+        PontosvistaR.push(pv7);
+        PontosvistaR.push(pv8);
+        PontosvistaR.push(pv9);
+    }
+}
+
+function calcularponto3D(i, pixel){
+    var alfa,beta,gama;
+    var baricentricas = [];
+    var p1 = parseInt(Triangulos[i].a - 1);
+    var p2 = parseInt(Triangulos[i].b - 1);
+    var p3 = parseInt(Triangulos[i].c - 1);
+    var a = Pontostela[p1].x;
+    var b = Pontostela[p2].x;
+    var c = Pontostela[p3].x;
+    var d = Pontostela[p1].y;
+    var e = Pontostela[p2].y;
+    var f = Pontostela[p3].y;
+    var g = 1, h = 1, k = 1;
+    var r1 = pixel.x, r2 = pixel.y, r3 = 1;
+    var det =  ((a * e * k) + (b * f * g) + (c * d * h)) - ((c * e * g) + (a * f * h) + (b * d * k));
+    var detAlfa = ((r1 * e * k) + (b * f * r3) + (c * r2 * h)) - ((c * e * r3) + (r1 * f * h) + (b * r2 * k));
+    var detBeta = ((a * r2 * k) + (r1 * f * g) + (c * d * r3)) - ((c * r2 * g) + (a * f * r3) + (r1 * d * k));
+    var detGama = ((a * e * r3) + (b * r2 * g) + (r1 * d * h)) - ((r1 * e * g) + (a * r2 * h) + (b * d * r3));
+    
+    if (det == 0) {
+        // Divisão por zero! Não é possível completar a operação!
+    } else {
+        alfa = detAlfa /det;
+        beta = detBeta / det;
+        gama = detGama / det;
+    }
+    return pontoCorrespondente(i, alfa, beta, gama);
 }
 
 function subtracaovetores(vetor1, vetor2){
