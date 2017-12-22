@@ -70,8 +70,12 @@ function draw() {
             imgData.data[1] = parseInt(zBuffer[PontosDesenhar[i].x][PontosDesenhar[i].y].x.b);
             imgData.data[2] = parseInt(zBuffer[PontosDesenhar[i].x][PontosDesenhar[i].y].x.c);
             imgData.data[3] = 255;
-
             ctx.putImageData(imgData, PontosDesenhar[i].x, PontosDesenhar[i].y);
+
+            /*ctx.beginPath();
+            ctx.arc(PontosDesenhar[i].x, PontosDesenhar[i].y, 1, 0, 1 * Math.PI);
+            ctx.fillStyle = 'rgb(' + parseInt(zBuffer[PontosDesenhar[i].x][PontosDesenhar[i].y].x.a) + ',' + parseInt(zBuffer[PontosDesenhar[i].x][PontosDesenhar[i].y].x.b) + ',' + parseInt(zBuffer[PontosDesenhar[i].x][PontosDesenhar[i].y].x.c) + ')';
+            ctx.fill();*/
         }
     }
     ctx.stroke();
@@ -134,17 +138,7 @@ window.onload = function () {
                 Triangulos[i] = setVetor(Objeto[i + vet0]);
             }
 
-            //A normal dos vertices inicializada com 0
-            for(var i = 0; i < Pontos.length; i++){
-                Normalvertice[i] = {a: 0, b:0, c:0};
-            }
-
-
-            // A normal do triangulo
-            for (var i = 0; i < Triangulos.length; i++){
-                Normaltriangulo[i] = normalTriangulo(Triangulos[i]);
-                normalVertice(i);
-            }
+            
         }
         byuReader.readAsText(byuTobeRead);
 
@@ -177,6 +171,18 @@ window.onload = function () {
          //Cada ponto para coordenada de vista 
         coordenadasVistaPontos();
 
+        //A normal dos vertices inicializada com 0
+        for(var i = 0; i < Pontos.length; i++){
+            Normalvertice[i] = {a: 0, b:0, c:0};
+        }
+
+
+        // A normal do triangulo
+        for (var i = 0; i < Triangulos.length; i++){
+            Normaltriangulo[i] = normalTriangulo(Triangulos[i]);
+            normalVertice(i);
+        }
+
         //Cada ponto para coordenada de tela
         coordenadasTela();
 
@@ -186,8 +192,6 @@ window.onload = function () {
         scanLine();
 
         draw();
-
-        /*imprimir();*/
 
     }, false);
     
@@ -240,12 +244,12 @@ function normalizacao(vetor) {
 }
 
 function normalTriangulo(triangulo) {
-    var vertice1 = Pontos[triangulo.a - 1];
-    var vertice2 = Pontos[triangulo.b - 1];
-    var vertice3 = Pontos[triangulo.c - 1];
+    var vertice1 = Pontosvista[triangulo.a - 1];
+    var vertice2 = Pontosvista[triangulo.b - 1];
+    var vertice3 = Pontosvista[triangulo.c - 1];
     var P3P1 = {a: parseFloat(vertice3.a) - parseFloat(vertice1.a), b: parseFloat(vertice3.b) - parseFloat(vertice1.b), c: parseFloat(vertice3.c) - parseFloat(vertice1.c)};
     var P2P1 = {a: parseFloat(vertice2.a) - parseFloat(vertice1.a), b: parseFloat(vertice2.b) - parseFloat(vertice1.b), c: parseFloat(vertice2.c) - parseFloat(vertice1.c) };
-    var vetorial = produtoVetorial(P2P1, P3P1);
+    var vetorial = produtoVetorial(P3P1, P2P1);
     return normalizacao(vetorial);
 }
 
@@ -418,6 +422,7 @@ function desenharPontos(curx1, curx2, b, i, v1, v2, v3){
 }
 
 function inicioZbuffer(){
+    var cor = {a: 0, b: 0, c: 0};
     for(var i = 0; i < larguraJanela; i++){
         zBuffer[i] = [];
     }
@@ -566,74 +571,3 @@ function somavetor(vetor1,vetor2, vetor3){
     var vetor = {a: x, b: y, c: z};
     return vetor;
 }
-
-//A parte de impressão será removida do projeto final, serve apenas para facilitar nossa vida e a vida dos monitores na correção
-
-function imprimir (){
-    var auxT;
-    aux3 = larguraJanela + ' ' + alturaJanela + '\n';
-    aux3 += zBuffer.length + '\n';
-    aux3 += zBuffer[0].length + '\n';
-    for(var i in zBuffer){
-        for(var j in zBuffer){
-            aux3 += zBuffer[i][j].y + ' ';
-        }
-        aux3 += '\n';
-    }
-
-    /*aux2 += Pontos.length + ' ' + Triangulos.length + '\n';
-    auxT = aux2;
-    aux = 'Objeto: \n';
-    for(var i = 0; i < Pontos.length; i ++){
-        aux += 'Ponto ' + (i+1) + ': ' + Pontos[i].a + '  ' + Pontos[i].b + '  ' + Pontos[i].c + '\n';
-    }
-    for(var i = 0; i < Triangulos.length; i++){
-        aux += 'Triangulo ' + (i+1) + ': ' + Triangulos[i].a + '  ' + Triangulos[i].b + '  ' + Triangulos[i].c + '\n';
-    }*/
-    /*aux += 'Iluminacao: \n';
-    aux += 'Pl: ' + Pl.a + ' ' + Pl.b + ' ' + Pl.c + '\n';
-    aux += 'ka: ' + ka + '\n';
-    aux += 'Ia: ' + Ia.a + ' ' + Ia.b + ' ' + Ia.c + '\n';
-    aux += 'kd: ' + kd + '\n';
-    aux += 'Od: ' + Od.a + ' ' + Od.b + ' ' + Od.c + '\n';
-    aux += 'ks: ' + ks + '\n';
-    aux += 'Il: ' + Il.a + ' ' + Il.b + ' ' + Il.c + '\n';
-    aux += 'n: ' + n + '\n';
-    auxT += aux ;*/
-
-    
-    /*aux3 = 'Vetor N(normalizado): ' + N.a + '  ' + N.b + '  ' + N.c + '\n';
-    aux3 += 'Vetor V(ortogonalizado + normalizado): ' + V.a + '  ' + V.b + '  ' + V.c + '\n';
-    aux3 += 'Vetor U: ' + U.a + '  ' + U.b + '  ' + U.c + '\n';
-    auxT += '\n\n 3º Preparar a câmera:\n' + aux3;
-    for (var i = 0; i < Triangulos.length; i++){
-        aux4 += 'Normaltriangulo ' + (i+1) + ': ' + Normaltriangulo[i].a + '  ' + Normaltriangulo[i].b + '  ' + Normaltriangulo[i].c + '\n';
-    }
-    for(var i = 0; i < Pontos.length; i++){
-        aux4 += 'Normalvertice ' + (i+1) + ': ' + Normalvertice[i].a + '  ' + Normalvertice[i].b + '  ' + Normalvertice[i].c + '\n';
-    }
-    auxT += '\n\n 4º Calcular a normal do triângulo e dos vérties: \n ' + aux4; 
-    aux5 = 'Cordenada de vista Pl: ' + Plvista.a + '  ' + Plvista.b + '  ' + Plvista.c + '\n';
-    for(var i = 0; i < Pontos.length; i++){
-        aux5 += 'Pontosvista ' + (i+1) + ': ' + Pontosvista[i].a + '  ' + Pontosvista[i].b + '  ' + Pontosvista[i].c + '\n';
-    }
-    auxT += '\n\n 5º Fazer a mudança de coordenadas de mundo para coordenadas de vista: \n ' + aux5; 
-    var aux6 = '2º ENTREGA \n';
-    for (var i  = 0; i < Pontostela.length; i++){
-        aux6 += 'PontosTela ' + (i+1) + ': ' + Pontostela[i].x + ' ' + Pontostela[i].y + '\n'; 
-    }
-  /*  for(var i = 0; i < PontosDesenhar.length; i++){    
-        //aux7 += 'PontosDesenhar ' + (i+1) + ': ' + PontosDesenhar[i].x + ' ' + PontosDesenhar[i].y + '\n'; 
-        aux7 += 'PontosDesenhar ' + (i+1) + ': ' + PontosDesenhar[i].x + ' ' + PontosDesenhar[i].y + '\n'; 
-    } */
-
-    /*auxT += aux6;
-    auxT += PontosDesenhar.length + '\n';
-    auxT += aux7;*/
-    var content = document.getElementById('content'); 
-    content.innerText = aux3; 
-}
-
-/*setInterval(() => {
-  draw();
-}, 1/1000);*/

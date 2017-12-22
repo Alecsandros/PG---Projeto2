@@ -12,13 +12,16 @@
             height: 600px;
         }
         #canvas {
-		    width: 1000px;
-		    height: 1000px;
-		    margin: 0;
-		    padding: 0;
-		    border: 0;
+            width: 100%;
+            height: 1000px;
+            margin: 0;
+            padding: 0;
+            border: 0;
             background: white;
-		}
+        }
+        #button2:active {
+            background-color: lightblue;
+        }
         a {
             text-decoration: none;
             color: blue;
@@ -40,7 +43,7 @@
     <div> </div>
     <input type = "button" id = "button" value = "Carregar" />
     <input type = "button" id = "button2" value = "Desenhar" />
-	<canvas id="canvas"></canvas>
+    <canvas id="canvas"></canvas>
     <b>Impressão</b>
     <div id="content"></div>
     <script language="JavaScript" src="JavaScript.js"></script>
