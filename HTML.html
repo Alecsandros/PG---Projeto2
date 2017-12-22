@@ -2,50 +2,137 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-
-    <title>FileAPI HTML5</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <title>PG | Corte 2D</title>
     <style type="text/css">
-        #content {
-            border: double;
-            overflow-y: scroll;
-            height: 600px;
-        }
-        #canvas {
-            width: 100%;
-            height: 1000px;
+        
+        * {
             margin: 0;
             padding: 0;
-            border: 0;
-            background: white;
+            font-family: 'Lato', sans-serif;
         }
-        #button2:active {
-            background-color: lightblue;
+
+        .body {
+            display:flex;
+            flex-direction: row;
         }
-        a {
-            text-decoration: none;
-            color: blue;
+
+        .sidebar {
+            display:flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 30vw;
+            font-size:20px;
+            top: 0;
+            left: 0;
+            background-color: #809fff;
+            overflow-x: hidden;
+            transition: 0.5s;
+            color: #ffffff;
+            padding: 2em 1em 0 1em;
+            z-index: 1;
+        }
+
+        .content {
+            display:flex;
+            flex-direction: column;
+            align-items: center;
+            width: 70vw;
+            color: #809fff;
+        }
+
+        .download {
+            color: #001a66;
             cursor: pointer; 
+            margin-bottom: 1.5em;
         }
+
+        .seletores {
+            display:flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5em;
+        }
+
+        .title {
+            font-size: 1.2em;
+            color: #ff471a;
+            margin: 2em 0 2em 0;
+        }
+
+        .butoes {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1em;
+        }
+
+        #button, #button2, #btGeral, #btCorte2D {
+            cursor: pointer;
+            width: 7em;
+            height: 2.5em;
+            font-size: 16px;
+            font-weight: 600;
+            background: #ffffff;
+            color: #ff471a;
+            border-radius: 15em;
+            border: none;
+        }
+
+         #button:active, #button2:active {
+            background: #ff471a;
+            color: #ffffff;
+         }
+        
+        #canvas {
+            width: 50vw;
+            height: 50vw;
+            border-style: double;
+        }
+
     </style>
 </head>
 <body>
-    <h1 align="center"> Corte 2D </h1>    
-    <div>
-        <a href = "https://drive.google.com/drive/folders/1jxzXKzSCUekBXz9X0J4CJAWGldgDDqmO" target = "_blank"> Download das entradas </a> 
+    <div class="body">
+        <div class="sidebar">
+            <div class="seletores">
+                <span>Selecione a câmera:</span>
+                <input type="file" id="cfg" />
+            </div>
+
+            <div class="seletores">
+                <span>Selecione o objeto:</span>
+                <input type="file" id="byu" />
+                
+            </div>
+
+            <div class="seletores">
+                <span>Selecione a iluminação:</span>
+                <input type="file" id="txt" />
+
+            </div>
+
+            <div class="butoes">
+                <input type="button" id="button" value="Carregar"/>
+                <input type="button" id="button2" value="Desenhar"/>
+            </div>
+
+            <div class="butoes">
+                <input type="button" id="btGeral" value="Geral"/>
+                <input type="button" id="btCorte2D" value="Corte 2D"/>
+            </div>
+
+        </div>
+        
+        <div class="content">
+            <div class="title">
+                <h1> Corte 2D </h1>    
+            </div>
+           
+           <canvas id="canvas"></canvas>
+        </div>    
+
     </div>
-    <p><b>Selecione a câmera: </b></p>
-    <input type="file" id="cfg" /><br/>
-    <p><b> Selecione o objeto: </b></p>
-    <input type="file" id="byu" /><br/>
-    <p><b>Selecione a iluminação: </b></p>
-    <input type="file" id="txt" /><br/>
-    <div> </div>
-    <input type = "button" id = "button" value = "Carregar" />
-    <input type = "button" id = "button2" value = "Desenhar" />
-    <canvas id="canvas"></canvas>
-    <b>Impressão</b>
-    <div id="content"></div>
     <script language="JavaScript" src="JavaScript.js"></script>
 </body>
 </html>
