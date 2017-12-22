@@ -848,3 +848,17 @@ function somavetor(vetor1,vetor2, vetor3){
     var vetor = {a: x, b: y, c: z};
     return vetor;
 }
+
+var recorte = false;
+
+function changeBt (){
+    var bt = document.getElementById("btCorte2D");
+    if (bt.value == "Com corte 2D") {
+        document.getElementById("btCorte2D").value = "Sem corte 2D";
+        recorte = true;
+    } else {
+        document.getElementById("btCorte2D").value = "Com corte 2D";
+        recorte = false;
+    }
+console.log(recorte);
+}
