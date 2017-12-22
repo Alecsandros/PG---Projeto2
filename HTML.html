@@ -21,7 +21,7 @@
         .sidebar {
             display:flex;
             flex-direction: column;
-            height: 100vh;
+            height: 95vh;
             width: 30vw;
             font-size:20px;
             top: 0;
@@ -56,9 +56,9 @@
         }
 
         .title {
-            font-size: 1.2em;
+            font-size: 1em;
             color: #ff471a;
-            margin: 2em 0 2em 0;
+            align-self: center;
         }
 
         .butoes {
@@ -85,8 +85,8 @@
          }
         
         #canvas {
-            width: 50vw;
-            height: 50vw;
+            width: 65vw;
+            height: 100vh;
             border-style: double;
         }
 
@@ -95,6 +95,9 @@
 <body>
     <div class="body">
         <div class="sidebar">
+            <div class="title">
+                <h1> Corte 2D </h1>    
+            </div>
             <div class="seletores">
                 <span>Selecione a câmera:</span>
                 <input type="file" id="cfg" />
@@ -125,9 +128,6 @@
         </div>
         
         <div class="content">
-            <div class="title">
-                <h1> Corte 2D </h1>    
-            </div>
            
            <canvas id="canvas"></canvas>
         </div>    
