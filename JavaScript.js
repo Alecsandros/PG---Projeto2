@@ -105,6 +105,7 @@ window.onload = function () {
             d = vet.a;
             hx = vet.b;
             hy = vet.c;
+            console.log("Terminou camera");
 
         }
         cfgReader.readAsText(cfgTobeRead);
@@ -119,7 +120,7 @@ window.onload = function () {
             ks = Iluminacao[5];
             Il = setVetor(Iluminacao[6]);
             n = Iluminacao[7];
-
+            console.log("Terminou Iluminacao");
 
         }
         txtReader.readAsText(txtTobeRead);
@@ -137,8 +138,7 @@ window.onload = function () {
             for(var i = 0; i < vet[1]; i++){ // de vet[0] a vet[1]-1
                 Triangulos[i] = setVetor(Objeto[i + vet0]);
             }
-
-            
+            console.log("Terminou objeto com Pontos.length: " + Pontos.length + " e Triangulos.length: " + Triangulos.length);
         }
         byuReader.readAsText(byuTobeRead);
 
@@ -148,9 +148,10 @@ window.onload = function () {
 
     var botao2 = document.getElementById('button2');
     botao2.addEventListener('click', function (e) {
-
+        PontosDesenhar.length = 0;
         //Normalizar N
         N = normalizacao(N);
+        console.log(N);
 
         //Ortogonalizar o vetor V
         var projecaoVN = projecao(V,N);
