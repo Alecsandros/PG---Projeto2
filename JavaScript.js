@@ -7,15 +7,7 @@ var Camera = [];
 var Objeto = [];
 var Iluminacao = [];
 
-//impressão
-var aux1 = '';
-var aux2 = '';
-var aux3 = '';
-var aux4 = '';
-var aux5 = '';
-var aux7 = '';
-var AUX = true;
-//impressão
+var recorte = false;
 
 var arrayy = [];
 
@@ -174,15 +166,11 @@ window.onload = function () {
 
         //Cada ponto para coordenada de vista 
         coordenadasVistaPontos();
-        console.log(C);
-        console.log(Pontos);
-        console.log(Pontosvista);
 
         //A normal dos vertices inicializada com 0
         for(var i = 0; i < Pontos.length; i++){
             Normalvertice[i] = {a: 0, b:0, c:0};
         }
-
 
         // A normal do triangulo
         for (var i = 0; i < Triangulos.length; i++){
@@ -190,11 +178,20 @@ window.onload = function () {
             normalVertice(i);
         }
 
+        /*for(var i = 0; i < Normalvertice.length; i++){
+            Normalvertice[i] = normalizacao(Normalvertice[i]);
+        }*/
+
         //Cada ponto para coordenada de tela
         coordenadasTela();
 
-        //cortartriangulos();
-        //definirtriangulos();
+        if(recorte){
+            cortartriangulos();
+            definirtriangulos();
+        }
+        console.log(Triangulos);
+        console.log(Pontosvista);
+        console.log(Pontostela);
 
         inicioZbuffer();
 
@@ -209,11 +206,15 @@ window.onload = function () {
 }
 
 function definirtriangulos(){
-    Triangulos.length = 0;
-    PontosvistaR.length = 0;
-    PontostelaR.length = 0;
+    Triangulos = [];
+    Pontosvista = [];
+    Pontostela = [];
 
-    for(var i = 0; i < TriangulosR; i++){
+    Triangulos = TriangulosR;
+    Pontosvista = PontosvistaR;
+    Pontostela = PontostelaR;
+
+    /*for(var i = 0; i < TriangulosR; i++){
         Triangulos[i] = TriangulosR[i];
     }
 
@@ -223,7 +224,7 @@ function definirtriangulos(){
 
     for(var i = 0; i < PontostelaR; i++){
         Pontostela[i] = PontostelaR[i];
-    }
+    }*/
 }
 
 function cortartriangulos (){ 
@@ -237,7 +238,7 @@ function cortartriangulos (){
         var c1 = codificar(v1); 
         var c2 = codificar(v2); 
         var c3 = codificar(v3); 
-        if(v1 === 0 && v2 === 0 && v3 === 0){ 
+        if(c1 === 0 && c2 === 0 && c3 === 0){ 
             var triangulo = {a: PontosvistaR.length, b: PontosvistaR.length+1, c: PontosvistaR.length+2};
             PontosvistaR.push(Pontosvista[p1]);
             PontosvistaR.push(Pontosvista[p2]);
@@ -367,7 +368,7 @@ function criararray(A1, A2, A3){
 function criartriangulo(A){ //mudar isso pra se adequar a nova coisa
     if(A.length === 3){
 
-        var triangulo = {a: PontostelaR.length, b: PontostelaR.length+1, c: PontostelaR.length+2};
+        var triangulo = {a: PontostelaR.length+1, b: PontostelaR.length+2, c: PontostelaR.length+3};
         PontostelaR.push(A[0]);
         PontostelaR.push(A[1]);
         PontostelaR.push(A[2]);
@@ -382,7 +383,7 @@ function criartriangulo(A){ //mudar isso pra se adequar a nova coisa
     
     } else if(A.length === 4) {
 
-        var triangulo = {a: PontostelaR.length, b: PontostelaR.length+1, c: PontostelaR.length+2};
+        var triangulo = {a: PontostelaR.length+1, b: PontostelaR.length+2, c: PontostelaR.length+3};
         PontostelaR.push(A[0]);
         PontostelaR.push(A[1]);
         PontostelaR.push(A[2]);
@@ -394,7 +395,7 @@ function criartriangulo(A){ //mudar isso pra se adequar a nova coisa
         PontosvistaR.push(pv2);
         PontosvistaR.push(pv3);
 
-        var triangulo2 = {a: PontostelaR.length, b: PontostelaR.length+1, c: PontostelaR.length+2};
+        var triangulo2 = {a: PontostelaR.length+1, b: PontostelaR.length+2, c: PontostelaR.length+3};
         PontostelaR.push(A[2]);
         PontostelaR.push(A[3]);
         PontostelaR.push(A[0]);
@@ -408,7 +409,7 @@ function criartriangulo(A){ //mudar isso pra se adequar a nova coisa
 
     } else if(A.length == 5) {
 
-        var triangulo = {a: PontostelaR.length, b: PontostelaR.length+1, c: PontostelaR.length+2};
+        var triangulo = {a: PontostelaR.length+1, b: PontostelaR.length+2, c: PontostelaR.length+3};
         PontostelaR.push(A[0]);
         PontostelaR.push(A[1]);
         PontostelaR.push(A[2]);
@@ -420,7 +421,7 @@ function criartriangulo(A){ //mudar isso pra se adequar a nova coisa
         PontosvistaR.push(pv2);
         PontosvistaR.push(pv3);
 
-        var triangulo2 = {a: PontostelaR.length, b: PontostelaR.length+1, c: PontostelaR.length+2};
+        var triangulo2 = {a: PontostelaR.length+1, b: PontostelaR.length+2, c: PontostelaR.length+3};
         PontostelaR.push(A[2]);
         PontostelaR.push(A[3]);
         PontostelaR.push(A[4]);
@@ -432,7 +433,7 @@ function criartriangulo(A){ //mudar isso pra se adequar a nova coisa
         PontosvistaR.push(pv5);
         PontosvistaR.push(pv6);
 
-        var triangulo3 = {a: PontostelaR.length, b: PontostelaR.length+1, c: PontostelaR.length+2};
+        var triangulo3 = {a: PontostelaR.length+1, b: PontostelaR.length+2, c: PontostelaR.length+3};
         PontostelaR.push(A[4]);
         PontostelaR.push(A[0]);
         PontostelaR.push(A[2]);
@@ -561,7 +562,6 @@ function coordenadasVistaPontos(){
 function coordenadaVistaPl(){
     var matriz = {aa: Pl.a - C.a, ba: Pl.b - C.b, ca: Pl.c - C.c};
     Plvista = multMatrizes(matriz);
-    aux3 += Plvista.a + ' ' + Plvista.b + ' ' + Plvista.c;
 }
 
 function multMatrizes(matriz){
@@ -668,7 +668,7 @@ function Top(v1, v2, v3, i){
     for(var scanlineY = v3.y; scanlineY >= v1.y; scanlineY--, i){
         desenharPontos(parseInt(curx1), parseInt(curx2),scanlineY, i, v1, v2, v3);
         curx1 -= invislope1;
-        curx2 -=invislope2;
+        curx2 -= invislope2;
     }
 }
 function Bottom(v1, v2, v3, i){
@@ -779,6 +779,7 @@ function normalpontocorrespondente(i, alfa, beta, gama){
 
 function Phong(pontocorrespondente,i,pixel, alfa, beta, gama){
     var normal, produtodifusa, produtoespecular,potenciaespecular, cor;
+    //Cor = Ka.Ia (ambiental) + Kd.(L.N).Od.Il (difusa) + Ks.(R.V)^n. Il (especular)
     var ambiental, difusa, especular;
     var escalarespecular;
     var L = subtracaovetores(Plvista, pontocorrespondente);
@@ -848,8 +849,6 @@ function somavetor(vetor1,vetor2, vetor3){
     var vetor = {a: x, b: y, c: z};
     return vetor;
 }
-
-var recorte = false;
 
 function changeBt (){
     var bt = document.getElementById("btCorte2D");
